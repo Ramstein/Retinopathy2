@@ -62,7 +62,7 @@ pretrained_settings_dilated = {
     },
     'se_resnext50_32x4d': {
         'imagenet': {
-            'url': 'http://data.lip6.fr/cadene/pretrainedmodels/se_resnext50_32x4d-a260b3a4.pth',
+            'url': 'https://dataset-retinopathy.s3.amazonaws.com/pretrained/se_resnext50_32x4d-a260b3a4.pth',
             'input_space': 'RGB',
             'input_size': [3, 224, 224],
             'input_range': [0, 1],

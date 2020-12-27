@@ -239,7 +239,9 @@ def get_aptos2019_test(data_dir):
 def get_aptos2015_train(dataset_dir, healthy_eye_fraction=1):
     aptos2015_train = pd.read_csv(os.path.join(dataset_dir, 'train_labels.csv'))
     aptos2015_train['image_path'] = aptos2015_train['id_code'].apply(
-        lambda x: os.path.join(dataset_dir, 'train_images_768', f'{x}.png'))
+        #     lambda x: os.path.join(dataset_dir, 'train_images_768', f'{x}.png'))
+        # aptos2015_train['image_path'] = aptos2015_train['id_code'].apply(
+        lambda x: os.path.join(dataset_dir, 'train_images_768', f'{x}.jpeg'))
     x = np.array(aptos2015_train['image_path'])
     y = np.array(aptos2015_train['diagnosis'], dtype=int)
 
@@ -254,8 +256,10 @@ def get_aptos2015_train(dataset_dir, healthy_eye_fraction=1):
 def get_aptos2015_test_public(dataset_dir, healthy_eye_fraction=1):
     aptos2015_test = pd.read_csv(os.path.join(dataset_dir, 'test_labels.csv'))
     aptos2015_test = aptos2015_test[aptos2015_test['Usage'] == 'Public']
+    # aptos2015_test['image_path'] = aptos2015_test['id_code'].apply(
+    #     lambda x: os.path.join(dataset_dir, 'test_images_768', f'{x}.png'))
     aptos2015_test['image_path'] = aptos2015_test['id_code'].apply(
-        lambda x: os.path.join(dataset_dir, 'test_images_768', f'{x}.png'))
+        lambda x: os.path.join(dataset_dir, 'test_images_768', f'{x}.jpeg'))
     x = np.array(aptos2015_test['image_path'])
     y = np.array(aptos2015_test['diagnosis'], dtype=int)
 
@@ -270,8 +274,10 @@ def get_aptos2015_test_public(dataset_dir, healthy_eye_fraction=1):
 def get_aptos2015_test_private(dataset_dir, healthy_eye_fraction=1):
     aptos2015_test = pd.read_csv(os.path.join(dataset_dir, 'test_labels.csv'))
     aptos2015_test = aptos2015_test[aptos2015_test['Usage'] == 'Private']
+    # aptos2015_test['image_path'] = aptos2015_test['id_code'].apply(
+    #     lambda x: os.path.join(dataset_dir, 'test_images_768', f'{x}.png'))
     aptos2015_test['image_path'] = aptos2015_test['id_code'].apply(
-        lambda x: os.path.join(dataset_dir, 'test_images_768', f'{x}.png'))
+        lambda x: os.path.join(dataset_dir, 'test_images_768', f'{x}.jpeg'))
     x = np.array(aptos2015_test['image_path'])
     y = np.array(aptos2015_test['diagnosis'], dtype=int)
 
@@ -958,8 +964,10 @@ def get_datasets(
             os.path.join(aptos2015_dir, 'aptos2015_train_pseudolabel_round_1.csv'))
         aptos2015_train_pseudolabel_round_1 = aptos2015_train_pseudolabel_round_1[
             aptos2015_train_pseudolabel_round_1['diagnosis'] != -100]
+        # x = np.array(aptos2015_train_pseudolabel_round_1['id_code'].apply(
+        #     lambda x: os.path.join(aptos2015_dir, 'train_images_768', f'{x}.png')))
         x = np.array(aptos2015_train_pseudolabel_round_1['id_code'].apply(
-            lambda x: os.path.join(aptos2015_dir, 'train_images_768', f'{x}.png')))
+            lambda x: os.path.join(aptos2015_dir, 'train_images_768', f'{x}.jpeg')))
         y = np.array(aptos2015_train_pseudolabel_round_1['diagnosis'], dtype=int)
 
         # For training part of aptos2015 - add it conventionaly
@@ -971,8 +979,10 @@ def get_datasets(
         aptos2015_test_public_pl1 = pd.read_csv(
             os.path.join(aptos2015_dir, 'aptos2015_test_public_pseudolabel_round_1.csv'))
         aptos2015_test_public_pl1 = aptos2015_test_public_pl1[aptos2015_test_public_pl1['diagnosis'] != -100]
+        # x = np.array(aptos2015_test_public_pl1['id_code'].apply(
+        #     lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.png')))
         x = np.array(aptos2015_test_public_pl1['id_code'].apply(
-            lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.png')))
+            lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.jpeg')))
         y = np.array(aptos2015_test_public_pl1['diagnosis'], dtype=int)
 
         # For pseudolabeled data, we add only one fold of it to clear training data
@@ -990,8 +1000,10 @@ def get_datasets(
         aptos2015_test_private_pl1 = pd.read_csv(
             os.path.join(aptos2015_dir, 'aptos2015_test_private_pseudolabel_round_1.csv'))
         aptos2015_test_private_pl1 = aptos2015_test_private_pl1[aptos2015_test_private_pl1['diagnosis'] != -100]
+        # x = np.array(aptos2015_test_private_pl1['id_code'].apply(
+        #     lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.png')))
         x = np.array(aptos2015_test_private_pl1['id_code'].apply(
-            lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.png')))
+            lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.jpeg')))
         y = np.array(aptos2015_test_private_pl1['diagnosis'], dtype=int)
 
         # From test set add only unhealthy

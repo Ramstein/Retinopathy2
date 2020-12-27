@@ -292,7 +292,6 @@ def run_model_inference(model_checkpoint: str,
                         checkpoint,
                         params,
                         test_csv: pd.DataFrame,
-                        data_dir,
                         images_dir='test_images',
                         preprocessing=None,
                         image_size=None,
@@ -306,7 +305,7 @@ def run_model_inference(model_checkpoint: str,
         image_size = params.get('image_size', 512)
         image_size = (image_size, image_size)
 
-    image_fnames = test_csv['id_code'].apply(lambda x: image_with_name_in_dir(os.path.join(data_dir, images_dir), x))
+    image_fnames = test_csv['id_code'].apply(lambda x: image_with_name_in_dir(images_dir, x))
 
     if 'diagnosis' in test_csv:
         targets = test_csv['diagnosis'].values

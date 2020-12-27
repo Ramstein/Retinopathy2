@@ -1,6 +1,7 @@
 import argparse
 import multiprocessing
 import os
+import time
 
 import boto3
 import botocore
@@ -40,30 +41,29 @@ def main():
     need_features = args.need_features
     batch_size = args.batch_size
     num_workers = args.workers
-    # checkpoints = args.input
     checkpoint_fname = args.input  # pass just single checkpoint filename as arg
 
-    # for i, checkpoint_fname in enumerate(checkpoints):
-    #     # print(i, checkpoint_fname)
+    data_dir = '/opt/ml/'
+    checkpoint_path = os.path.join(data_dir, 'model', checkpoint_fname)
+
+    current_milli_time = lambda: str(round(time.time() * 1000))
+    images_dir = os.path.join(data_dir, "ratinopathy", current_milli_time())
 
     # Make OOF predictions
-    checkpoint = torch.load(checkpoint_fname)
+    checkpoint = torch.load(checkpoint_path)
     params = checkpoint['checkpoint_data']['cmd_args']
-    data_dir = params['data_dir']
-    dep_data_dir = os.path.join(data_dir, 'aptos-2019')
-    images_dir = "test_images_768"
+
 
     for file in range(10):
-        download_from_s3(s3_filename="aptos-2019/train.csv", local_path=os.path.join(data_dir, 'train.csv'))
+        download_from_s3(s3_filename="aptos-2019/train.csv", local_path=os.path.join(data_dir, ))
 
     # Now run inference on Aptos2019 public test, will return a pd.DataFrame having image_id, logits, regrssions, ordinal, features
-    aptos2019_test = run_model_inference(model_checkpoint=checkpoint_fname,
+    aptos2019_test = run_model_inference(model_checkpoint=checkpoint_path,
                                          checkpoint=checkpoint,
                                          params=params,
                                          apply_softmax=True,
                                          need_features=need_features,
                                          test_csv=pd.read_csv(os.path.join(data_dir, 'aptos-2019', 'test.csv')),
-                                         data_dir=dep_data_dir,
                                          images_dir=images_dir,
                                          batch_size=batch_size,
                                          tta='fliplr',

@@ -53,7 +53,11 @@ def main():
     data_dir = '/opt/ml/'
     checkpoint_path = os.path.join(data_dir, 'model', checkpoint_fname)
     current_milli_time = lambda: str(round(time.time() * 1000))
-    checkpoint = torch.load(checkpoint_path)
+
+    if torch.cuda.is_available():
+        checkpoint = torch.load(checkpoint_path)
+    else:
+        checkpoint = torch.load(checkpoint_path, map_location=lambda storage, loc: storage)
     params = checkpoint['checkpoint_data']['cmd_args']
 
     # Make OOF predictions

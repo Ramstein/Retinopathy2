@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pytorch_toolbelt.inference.functional as FF
 import torch
+import torch.nn.functional as F
 from pytorch_toolbelt.utils.torch_utils import to_numpy
 from scipy.stats import trim_mean
 from torch import nn
@@ -20,7 +21,6 @@ from retinopathy.dataset import get_class_names, RetinopathyDataset
 from retinopathy.factory import get_model
 from retinopathy.models.regression import regression_to_class
 from retinopathy.train_utils import report_checkpoint
-import torch.nn.functional as F
 
 
 class FlipLRMultiheadTTA(nn.Module):
@@ -54,7 +54,8 @@ class MultiscaleFlipLRMultiheadTTA(nn.Module):
         cols = image.size(3)
         outputs = []
         for scale in [1.0, 1.15, 0.87]:
-            image_i = F.interpolate(image, size=(int(rows * scale), int(cols * scale)), mode='bilinear', align_corners=True)
+            image_i = F.interpolate(image, size=(int(rows * scale), int(cols * scale)), mode='bilinear',
+                                    align_corners=True)
 
             output = self.model(image_i)
             outputs.append(output)
@@ -128,6 +129,8 @@ def regression_getScore(pred, cdf, valid=False):
 
 def run_model_inference_via_dataset(model_checkpoint: str,
                                     dataset: RetinopathyDataset,
+                                    checkpoint,
+                                    params,
                                     model_name=None,
                                     batch_size=None,
                                     tta=None,
@@ -137,16 +140,16 @@ def run_model_inference_via_dataset(model_checkpoint: str,
     if workers is None:
         workers = multiprocessing.cpu_count()
 
-    checkpoint = torch.load(model_checkpoint)
+    # checkpoint = torch.load(model_checkpoint)
     report_checkpoint(checkpoint)
 
     if model_name is None:
-        model_name = checkpoint['checkpoint_data']['cmd_args']['model']
+        model_name = params['model']
 
     if batch_size is None:
-        batch_size = checkpoint['checkpoint_data']['cmd_args'].get('batch_size', 1)
+        batch_size = params.get('batch_size', 1)
 
-    coarse_grading = checkpoint['checkpoint_data']['cmd_args'].get('coarse', False)
+    coarse_grading = params.get('coarse', False)
 
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
@@ -208,8 +211,8 @@ def run_models_inference_via_dataset(model_checkpoints: List[str],
                                      need_features=True,
                                      apply_softmax=True,
                                      workers=None) -> List[pd.DataFrame]:
-    if workers is None:
-        workers = multiprocessing.cpu_count()
+    # if workers is None:
+    #     workers = multiprocessing.cpu_count()
 
     models = []
     models_predictions = []
@@ -286,6 +289,8 @@ def image_with_name_in_dir(dirname, image_id):
 
 
 def run_model_inference(model_checkpoint: str,
+                        checkpoint,
+                        params,
                         test_csv: pd.DataFrame,
                         data_dir,
                         images_dir='test_images',
@@ -293,12 +298,12 @@ def run_model_inference(model_checkpoint: str,
                         image_size=None,
                         crop_black=True,
                         **kwargs) -> pd.DataFrame:
-    checkpoint = torch.load(model_checkpoint)
+    # checkpoint = torch.load(model_checkpoint)
     if preprocessing is None:
-        preprocessing = checkpoint['checkpoint_data']['cmd_args'].get('preprocessing', None)
+        preprocessing = params.get('preprocessing', None)
 
     if image_size is None:
-        image_size = checkpoint['checkpoint_data']['cmd_args'].get('image_size', 512)
+        image_size = params.get('image_size', 512)
         image_size = (image_size, image_size)
 
     image_fnames = test_csv['id_code'].apply(lambda x: image_with_name_in_dir(os.path.join(data_dir, images_dir), x))
@@ -311,7 +316,10 @@ def run_model_inference(model_checkpoint: str,
     test_ds = RetinopathyDataset(image_fnames, targets, get_test_transform(image_size,
                                                                            preprocessing=preprocessing,
                                                                            crop_black=crop_black))
-    return run_model_inference_via_dataset(model_checkpoint, test_ds, **kwargs)
+    return run_model_inference_via_dataset(model_checkpoint,
+                                           test_ds,
+                                           checkpoint=checkpoint,
+                                           params=params, **kwargs)
 
 
 def run_models_inference(model_checkpoints: List[str],

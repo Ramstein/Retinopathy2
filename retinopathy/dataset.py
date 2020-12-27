@@ -987,9 +987,11 @@ def get_datasets(
         trainset_sizes.append(train_x[0])
 
         # Add Aptos2015 private test to validation set entirely
-        aptos2015_test_private_pl1 = pd.read_csv(os.path.join(aptos2015_dir, 'aptos2015_test_private_pseudolabel_round_1.csv'))
+        aptos2015_test_private_pl1 = pd.read_csv(
+            os.path.join(aptos2015_dir, 'aptos2015_test_private_pseudolabel_round_1.csv'))
         aptos2015_test_private_pl1 = aptos2015_test_private_pl1[aptos2015_test_private_pl1['diagnosis'] != -100]
-        x = np.array(aptos2015_test_private_pl1['id_code'].apply(lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.png')))
+        x = np.array(aptos2015_test_private_pl1['id_code'].apply(
+            lambda x: os.path.join(aptos2015_dir, 'test_images_768', f'{x}.png')))
         y = np.array(aptos2015_test_private_pl1['diagnosis'], dtype=int)
 
         # From test set add only unhealthy

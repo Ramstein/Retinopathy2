@@ -127,8 +127,7 @@ def regression_getScore(pred, cdf, valid=False):
     return output
 
 
-def run_model_inference_via_dataset(model_checkpoint: str,
-                                    dataset: RetinopathyDataset,
+def run_model_inference_via_dataset(dataset: RetinopathyDataset,
                                     checkpoint,
                                     params,
                                     model_name=None,
@@ -140,7 +139,6 @@ def run_model_inference_via_dataset(model_checkpoint: str,
     if workers is None:
         workers = multiprocessing.cpu_count()
 
-    # checkpoint = torch.load(model_checkpoint)
     report_checkpoint(checkpoint)
 
     if model_name is None:
@@ -211,8 +209,8 @@ def run_models_inference_via_dataset(model_checkpoints: List[str],
                                      need_features=True,
                                      apply_softmax=True,
                                      workers=None) -> List[pd.DataFrame]:
-    # if workers is None:
-    #     workers = multiprocessing.cpu_count()
+    if workers is None:
+        workers = multiprocessing.cpu_count()
 
     models = []
     models_predictions = []
@@ -288,37 +286,33 @@ def image_with_name_in_dir(dirname, image_id):
     raise FileNotFoundError(image_fname)
 
 
-def run_model_inference(model_checkpoint: str,
-                        checkpoint,
+def run_model_inference(checkpoint,
                         params,
-                        test_csv: pd.DataFrame,
-                        images_dir='test_images',
+                        retino: pd.DataFrame,
+                        image_paths=None,
                         preprocessing=None,
                         image_size=None,
                         crop_black=True,
                         **kwargs) -> pd.DataFrame:
-    # checkpoint = torch.load(model_checkpoint)
-    if preprocessing is None:
-        preprocessing = params.get('preprocessing', None)
+    if image_paths is not None:
+        if preprocessing is None:
+            preprocessing = params.get('preprocessing', None)
 
-    if image_size is None:
-        image_size = params.get('image_size', 512)
-        image_size = (image_size, image_size)
+        if image_size is None:
+            image_size = params.get('image_size', 512)
+            image_size = (image_size, image_size)
 
-    image_fnames = test_csv['id_code'].apply(lambda x: image_with_name_in_dir(images_dir, x))
+        if 'diagnosis' in retino:
+            targets = retino['diagnosis'].values
+        else:
+            targets = None
 
-    if 'diagnosis' in test_csv:
-        targets = test_csv['diagnosis'].values
-    else:
-        targets = None
-
-    test_ds = RetinopathyDataset(image_fnames, targets, get_test_transform(image_size,
-                                                                           preprocessing=preprocessing,
-                                                                           crop_black=crop_black))
-    return run_model_inference_via_dataset(model_checkpoint,
-                                           test_ds,
-                                           checkpoint=checkpoint,
-                                           params=params, **kwargs)
+        dataset = RetinopathyDataset(image_paths, targets, get_test_transform(image_size,
+                                                                              preprocessing=preprocessing,
+                                                                              crop_black=crop_black))
+        return run_model_inference_via_dataset(dataset=dataset,
+                                               checkpoint=checkpoint,
+                                               params=params, **kwargs)
 
 
 def run_models_inference(model_checkpoints: List[str],

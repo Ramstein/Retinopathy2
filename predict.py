@@ -40,146 +40,150 @@ def main():
     need_features = args.need_features
     batch_size = args.batch_size
     num_workers = args.workers
+    # checkpoints = args.input
+    checkpoint_fname = args.input  # pass just single checkpoint filename as arg
 
-    checkpoints = args.input
+    # for i, checkpoint_fname in enumerate(checkpoints):
+    #     # print(i, checkpoint_fname)
 
-    # downloading from s3
-    # download_from_s3(s3_filename="aptos-2019/train.csv", local_path=os.path.join(data_dir, 'train.csv'))
+    # Make OOF predictions
+    checkpoint = torch.load(checkpoint_fname)
+    params = checkpoint['checkpoint_data']['cmd_args']
+    data_dir = params['data_dir']
+    dep_data_dir = os.path.join(data_dir, 'aptos-2019')
+    images_dir = "test_images_768"
 
-    for i, checkpoint_fname in enumerate(checkpoints):
-        # print(i, checkpoint_fname)
+    for file in range(10):
+        download_from_s3(s3_filename="aptos-2019/train.csv", local_path=os.path.join(data_dir, 'train.csv'))
 
-        # Make OOF predictions
-        checkpoint = torch.load(checkpoint_fname)
-        params = checkpoint['checkpoint_data']['cmd_args']
-        data_dir = params['data_dir']
+    # Now run inference on Aptos2019 public test, will return a pd.DataFrame having image_id, logits, regrssions, ordinal, features
+    aptos2019_test = run_model_inference(model_checkpoint=checkpoint_fname,
+                                         checkpoint=checkpoint,
+                                         params=params,
+                                         apply_softmax=True,
+                                         need_features=need_features,
+                                         test_csv=pd.read_csv(os.path.join(data_dir, 'aptos-2019', 'test.csv')),
+                                         data_dir=dep_data_dir,
+                                         images_dir=images_dir,
+                                         batch_size=batch_size,
+                                         tta='fliplr',
+                                         workers=num_workers,
+                                         crop_black=True)
+    aptos2019_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2019_test_predictions.pkl'))
 
-        # Now run inference on Aptos2019 public test, will return a pd.DataFrame having image_id, logits, regrssions, ordinal, features
-        aptos2019_test = run_model_inference(model_checkpoint=checkpoint_fname,
-                                             checkpoint=checkpoint,
-                                             params=params,
-                                             apply_softmax=True,
-                                             need_features=need_features,
-                                             test_csv=pd.read_csv(os.path.join(data_dir, 'aptos-2019', 'test.csv')),
-                                             data_dir=os.path.join(data_dir, 'aptos-2019'),
-                                             images_dir='test_images_768',
-                                             batch_size=batch_size,
-                                             tta='fliplr',
-                                             workers=num_workers,
-                                             crop_black=True)
-        aptos2019_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2019_test_predictions.pkl'))
-
-        # if False:
-        #     # Now run inference on Aptos2019 public test, will return a pd.DataFrame having image_id, logits, regrssions, ordinal, features
-        #     aptos2019_test = run_model_inference(model_checkpoint=checkpoint_fname,
-        #                                          apply_softmax=True,
-        #                                          need_features=need_features,
-        #                                          test_csv=pd.read_csv(os.path.join(data_dir, 'aptos-2019', 'test.csv')),
-        #                                          data_dir=os.path.join(data_dir, 'aptos-2019'),
-        #                                          images_dir='test_images_768',
-        #                                          batch_size=batch_size,
-        #                                          tta='fliplr',
-        #                                          workers=num_workers,
-        #                                          crop_black=True)
-        #     aptos2019_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2019_test_predictions.pkl'))
-        #
-        # # Now run inference on Aptos2015 private test
-        # if False:
-        #     aptos2015_df = pd.read_csv(os.path.join(data_dir, 'aptos-2015', 'test_labels.csv'))
-        #     aptos2015_df = aptos2015_df[aptos2015_df['Usage'] == 'Private']
-        #     aptos2015_test = run_model_inference(model_checkpoint=checkpoint_fname,
-        #                                          apply_softmax=True,
-        #                                          need_features=need_features,
-        #                                          test_csv=aptos2015_df,
-        #                                          data_dir=os.path.join(data_dir, 'aptos-2015'),
-        #                                          images_dir='test_images_768',
-        #                                          batch_size=batch_size,
-        #                                          tta='fliplr',
-        #                                          workers=num_workers,
-        #                                          crop_black=True)
-        #     aptos2015_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2015_test_private_predictions.pkl'))
-        #
-        # if False:
-        #     aptos2015_df = pd.read_csv(os.path.join(data_dir, 'aptos-2015', 'test_labels.csv'))
-        #     aptos2015_df = aptos2015_df[aptos2015_df['Usage'] == 'Public']
-        #     aptos2015_test = run_model_inference(model_checkpoint=checkpoint_fname,
-        #                                          apply_softmax=True,
-        #                                          need_features=need_features,
-        #                                          test_csv=aptos2015_df,
-        #                                          data_dir=os.path.join(data_dir, 'aptos-2015'),
-        #                                          images_dir='test_images_768',
-        #                                          batch_size=batch_size,
-        #                                          tta='fliplr',
-        #                                          workers=num_workers,
-        #                                          crop_black=True)
-        #     aptos2015_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2015_test_public_predictions.pkl'))
-        #
-        # if False:
-        #     aptos2015_df = pd.read_csv(os.path.join(data_dir, 'aptos-2015', 'train_labels.csv'))
-        #     aptos2015_test = run_model_inference(model_checkpoint=checkpoint_fname,
-        #                                          apply_softmax=True,
-        #                                          need_features=need_features,
-        #                                          test_csv=aptos2015_df,
-        #                                          data_dir=os.path.join(data_dir, 'aptos-2015'),
-        #                                          images_dir='train_images_768',
-        #                                          batch_size=batch_size,
-        #                                          tta='fliplr',
-        #                                          workers=num_workers,
-        #                                          crop_black=True)
-        #     aptos2015_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2015_train_predictions.pkl'))
-        # if False:
-        #     train_ds, valid_ds, train_sizes = get_datasets(data_dir=params['data_dir'],
-        #                                                    use_aptos2019=params['use_aptos2019'],
-        #                                                    use_aptos2015=params['use_aptos2015'],
-        #                                                    use_idrid=params['use_idrid'],
-        #                                                    use_messidor=params['use_messidor'],
-        #                                                    use_unsupervised=False,
-        #                                                    image_size=(image_size, image_size),
-        #                                                    augmentation=params['augmentations'],
-        #                                                    preprocessing=params['preprocessing'],
-        #                                                    target_dtype=int,
-        #                                                    coarse_grading=params.get('coarse', False),
-        #                                                    fold=i,
-        #                                                    folds=4)
-        #     print(len(valid_ds))
-        #     oof_predictions = run_model_inference_via_dataset(checkpoint_fname,
-        #                                                       valid_ds,
-        #                                                       apply_softmax=True,
-        #                                                       need_features=need_features,
-        #                                                       batch_size=batch_size,
-        #                                                       workers=num_workers)
-        #
-        #     dst_fname = fs.change_extension(checkpoint_fname, '_oof_predictions.pkl')
-        #     oof_predictions.to_pickle(dst_fname)
-        #
-        # # Now run inference on holdout IDRID Test dataset
-        # if False:
-        #     idrid_test = run_model_inference(model_checkpoint=checkpoint_fname,
-        #                                      apply_softmax=True,
-        #                                      need_features=need_features,
-        #                                      test_csv=pd.read_csv(os.path.join(data_dir, 'idrid', 'test_labels.csv')),
-        #                                      data_dir=os.path.join(data_dir, 'idrid'),
-        #                                      images_dir='test_images_768',
-        #                                      batch_size=batch_size,
-        #                                      tta='fliplr',
-        #                                      workers=num_workers,
-        #                                      crop_black=True)
-        #     idrid_test.to_pickle(fs.change_extension(checkpoint_fname, '_idrid_test_predictions.pkl'))
-        #
-        # if False:
-        #     # Now run inference on Messidor 2 Test dataset
-        #     messidor2_train = run_model_inference(model_checkpoint=checkpoint_fname,
-        #                                           apply_softmax=True,
-        #                                           need_features=need_features,
-        #                                           test_csv=pd.read_csv(
-        #                                               os.path.join(data_dir, 'messidor_2', 'train_labels.csv')),
-        #                                           data_dir=os.path.join(data_dir, 'messidor_2'),
-        #                                           images_dir='train_images_768',
-        #                                           batch_size=batch_size,
-        #                                           tta='fliplr',
-        #                                           workers=num_workers,
-        #                                           crop_black=True)
-        #     messidor2_train.to_pickle(fs.change_extension(checkpoint_fname, '_messidor2_train_predictions.pkl'))
+    # for i, checkpoint_fname in enumerate(checkpoints):
+    #     # print(i, checkpoint_fname)
+    #     if False:
+    #         # Now run inference on Aptos2019 public test, will return a pd.DataFrame having image_id, logits, regrssions, ordinal, features
+    #         aptos2019_test = run_model_inference(model_checkpoint=checkpoint_fname,
+    #                                              apply_softmax=True,
+    #                                              need_features=need_features,
+    #                                              test_csv=pd.read_csv(os.path.join(data_dir, 'aptos-2019', 'test.csv')),
+    #                                              data_dir=os.path.join(data_dir, 'aptos-2019'),
+    #                                              images_dir='test_images_768',
+    #                                              batch_size=batch_size,
+    #                                              tta='fliplr',
+    #                                              workers=num_workers,
+    #                                              crop_black=True)
+    #         aptos2019_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2019_test_predictions.pkl'))
+    #
+    #     # Now run inference on Aptos2015 private test
+    #     if False:
+    #         aptos2015_df = pd.read_csv(os.path.join(data_dir, 'aptos-2015', 'test_labels.csv'))
+    #         aptos2015_df = aptos2015_df[aptos2015_df['Usage'] == 'Private']
+    #         aptos2015_test = run_model_inference(model_checkpoint=checkpoint_fname,
+    #                                              apply_softmax=True,
+    #                                              need_features=need_features,
+    #                                              test_csv=aptos2015_df,
+    #                                              data_dir=os.path.join(data_dir, 'aptos-2015'),
+    #                                              images_dir='test_images_768',
+    #                                              batch_size=batch_size,
+    #                                              tta='fliplr',
+    #                                              workers=num_workers,
+    #                                              crop_black=True)
+    #         aptos2015_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2015_test_private_predictions.pkl'))
+    #
+    #     if False:
+    #         aptos2015_df = pd.read_csv(os.path.join(data_dir, 'aptos-2015', 'test_labels.csv'))
+    #         aptos2015_df = aptos2015_df[aptos2015_df['Usage'] == 'Public']
+    #         aptos2015_test = run_model_inference(model_checkpoint=checkpoint_fname,
+    #                                              apply_softmax=True,
+    #                                              need_features=need_features,
+    #                                              test_csv=aptos2015_df,
+    #                                              data_dir=os.path.join(data_dir, 'aptos-2015'),
+    #                                              images_dir='test_images_768',
+    #                                              batch_size=batch_size,
+    #                                              tta='fliplr',
+    #                                              workers=num_workers,
+    #                                              crop_black=True)
+    #         aptos2015_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2015_test_public_predictions.pkl'))
+    #
+    #     if False:
+    #         aptos2015_df = pd.read_csv(os.path.join(data_dir, 'aptos-2015', 'train_labels.csv'))
+    #         aptos2015_test = run_model_inference(model_checkpoint=checkpoint_fname,
+    #                                              apply_softmax=True,
+    #                                              need_features=need_features,
+    #                                              test_csv=aptos2015_df,
+    #                                              data_dir=os.path.join(data_dir, 'aptos-2015'),
+    #                                              images_dir='train_images_768',
+    #                                              batch_size=batch_size,
+    #                                              tta='fliplr',
+    #                                              workers=num_workers,
+    #                                              crop_black=True)
+    #         aptos2015_test.to_pickle(fs.change_extension(checkpoint_fname, '_aptos2015_train_predictions.pkl'))
+    #     if False:
+    #         train_ds, valid_ds, train_sizes = get_datasets(data_dir=params['data_dir'],
+    #                                                        use_aptos2019=params['use_aptos2019'],
+    #                                                        use_aptos2015=params['use_aptos2015'],
+    #                                                        use_idrid=params['use_idrid'],
+    #                                                        use_messidor=params['use_messidor'],
+    #                                                        use_unsupervised=False,
+    #                                                        image_size=(image_size, image_size),
+    #                                                        augmentation=params['augmentations'],
+    #                                                        preprocessing=params['preprocessing'],
+    #                                                        target_dtype=int,
+    #                                                        coarse_grading=params.get('coarse', False),
+    #                                                        fold=i,
+    #                                                        folds=4)
+    #         print(len(valid_ds))
+    #         oof_predictions = run_model_inference_via_dataset(checkpoint_fname,
+    #                                                           valid_ds,
+    #                                                           apply_softmax=True,
+    #                                                           need_features=need_features,
+    #                                                           batch_size=batch_size,
+    #                                                           workers=num_workers)
+    #
+    #         dst_fname = fs.change_extension(checkpoint_fname, '_oof_predictions.pkl')
+    #         oof_predictions.to_pickle(dst_fname)
+    #
+    #     # Now run inference on holdout IDRID Test dataset
+    #     if False:
+    #         idrid_test = run_model_inference(model_checkpoint=checkpoint_fname,
+    #                                          apply_softmax=True,
+    #                                          need_features=need_features,
+    #                                          test_csv=pd.read_csv(os.path.join(data_dir, 'idrid', 'test_labels.csv')),
+    #                                          data_dir=os.path.join(data_dir, 'idrid'),
+    #                                          images_dir='test_images_768',
+    #                                          batch_size=batch_size,
+    #                                          tta='fliplr',
+    #                                          workers=num_workers,
+    #                                          crop_black=True)
+    #         idrid_test.to_pickle(fs.change_extension(checkpoint_fname, '_idrid_test_predictions.pkl'))
+    #
+    #     if False:
+    #         # Now run inference on Messidor 2 Test dataset
+    #         messidor2_train = run_model_inference(model_checkpoint=checkpoint_fname,
+    #                                               apply_softmax=True,
+    #                                               need_features=need_features,
+    #                                               test_csv=pd.read_csv(
+    #                                                   os.path.join(data_dir, 'messidor_2', 'train_labels.csv')),
+    #                                               data_dir=os.path.join(data_dir, 'messidor_2'),
+    #                                               images_dir='train_images_768',
+    #                                               batch_size=batch_size,
+    #                                               tta='fliplr',
+    #                                               workers=num_workers,
+    #                                               crop_black=True)
+    #         messidor2_train.to_pickle(fs.change_extension(checkpoint_fname, '_messidor2_train_predictions.pkl'))
 
 
 if __name__ == '__main__':

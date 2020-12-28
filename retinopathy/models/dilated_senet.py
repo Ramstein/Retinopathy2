@@ -4,9 +4,9 @@ https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
 """
 from __future__ import print_function, division, absolute_import
 
+import math
 from collections import OrderedDict
 
-import math
 import torch
 import torch.nn as nn
 from pytorch_toolbelt.modules.encoders import SEResnetEncoder

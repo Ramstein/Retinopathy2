@@ -2,7 +2,8 @@ import pytest
 from sklearn.metrics import cohen_kappa_score
 
 from retinopathy.dataset import get_datasets
-from retinopathy.inference import compute_cdf, run_model_inference_via_dataset, reg_predictions_to_submission, reg_cdf_predictions_to_submission
+from retinopathy.inference import compute_cdf, run_model_inference_via_dataset, reg_predictions_to_submission, \
+    reg_cdf_predictions_to_submission
 
 
 @pytest.mark.parametrize(['checkpoint_file', 'tta'], ['', None])

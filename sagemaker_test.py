@@ -1,4 +1,6 @@
 import argparse
+
+
 # import json
 # import torch
 # import tarfile
@@ -12,7 +14,6 @@ import argparse
 
 
 def main():
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-dd', '--data-dir', type=str, default='data', help='Data directory')
@@ -25,6 +26,7 @@ def main():
     num_workers = args.workers
 
     print(data_dir, num_workers, vars(args))
+
 
 if __name__ == '__main__':
     main()

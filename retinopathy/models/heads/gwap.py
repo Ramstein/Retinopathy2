@@ -58,4 +58,3 @@ class GlobalWeightedAvgPoolHead(nn.Module):
             'regression': regression,
             'ordinal': ordinal
         }
-

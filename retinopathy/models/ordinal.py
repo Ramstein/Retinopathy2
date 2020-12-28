@@ -59,6 +59,7 @@ class OrdinalEncoderHeadModel(nn.Module):
         self.head = head
         self.link = LogisticCumulativeLink(num_classes,
                                            init_cutpoints='ordered')
+
     @property
     def features_size(self):
         return self.head.features_size

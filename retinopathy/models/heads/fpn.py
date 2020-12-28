@@ -3,7 +3,7 @@ from pytorch_toolbelt.modules.coord_conv import AddCoords
 from pytorch_toolbelt.modules.decoders import FPNDecoder
 from pytorch_toolbelt.modules.fpn import FPNBottleneckBlockBN
 from pytorch_toolbelt.modules.hypercolumn import HyperColumn
-from pytorch_toolbelt.modules.pooling import GlobalAvgPool2d, GlobalMaxPool2d
+from pytorch_toolbelt.modules.pooling import GlobalMaxPool2d
 from torch import nn
 
 
@@ -38,7 +38,7 @@ class FPNHeadModel(nn.Module):
                                   fpn_features=128,
                                   prediction_features=128)
 
-        self.hypercolumn = HyperColumn(mode='nearest',align_corners=None)
+        self.hypercolumn = HyperColumn(mode='nearest', align_corners=None)
         self.maxpool = GlobalMaxPool2d()
         self.features_size = sum(self.decoder.output_filters)
         self.logits = nn.Linear(self.features_size, num_classes)

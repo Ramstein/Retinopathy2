@@ -1,8 +1,8 @@
 import cv2
+import pandas as pd
 import torch
 from pytorch_toolbelt.utils import fs
 from pytorch_toolbelt.utils.torch_utils import tensor_from_rgb_image
-import pandas as pd
 
 from retinopathy.augmentations import get_test_transform, AddMicroaneurisms
 from retinopathy.dataset import get_class_names
@@ -53,8 +53,6 @@ def test_inference():
             print(predictions['regression'])
 
 
-
-
 def test_inference_pd():
     test_csv = pd.read_csv('data/aptos-2019/test.csv')
 
@@ -72,5 +70,5 @@ def test_inference_pd():
                                           batch_size=8)
 
         predictions['diagnosis'] = predictions['diagnosis'].apply(regression_to_class).apply(int)
-        submission = predictions[['id_code','diagnosis']]
+        submission = predictions[['id_code', 'diagnosis']]
         print(submission)

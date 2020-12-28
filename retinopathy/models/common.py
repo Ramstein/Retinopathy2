@@ -12,8 +12,6 @@ class Flatten(nn.Module):
         return x.view(x.shape[0], -1)
 
 
-
-
 def regression_to_class(value: torch.Tensor, min=0, max=4, rounding_coefficients=None):
     if isinstance(value, np.ndarray):
         value = torch.from_numpy(value)
@@ -34,9 +32,6 @@ def regression_to_class(value: torch.Tensor, min=0, max=4, rounding_coefficients
     return value.long()
 
 
-
-
-
 class EncoderHeadModel(nn.Module):
     def __init__(self, encoder: EncoderModule, head: nn.Module):
         super().__init__()
@@ -51,4 +46,3 @@ class EncoderHeadModel(nn.Module):
         feature_maps = self.encoder(image)
         result = self.head(feature_maps)
         return result
-

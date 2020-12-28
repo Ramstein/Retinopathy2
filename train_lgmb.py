@@ -1,6 +1,5 @@
-import lightgbm as lgb
-import pandas as pd
 import numpy as np
+import pandas as pd
 from lightgbm import LGBMClassifier
 from pytorch_toolbelt.utils import fs
 from pytorch_toolbelt.utils.torch_utils import to_numpy
@@ -11,28 +10,36 @@ from retinopathy.models.common import regression_to_class
 
 
 def main():
-    f0_aptos15 = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold0_awesome_babbage_on_aptos2019_fold0.pkl'))
+    f0_aptos15 = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold0_awesome_babbage_on_aptos2019_fold0.pkl'))
     f0_aptos15['fold'] = 0
 
-    f0_idrid = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold0_heuristic_ptolemy_on_aptos2019_fold0.pkl'))
+    f0_idrid = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold0_heuristic_ptolemy_on_aptos2019_fold0.pkl'))
     f0_idrid['fold'] = 0
 
-    f1_aptos15 = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold1_hopeful_khorana_on_aptos2019_fold1.pkl'))
+    f1_aptos15 = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold1_hopeful_khorana_on_aptos2019_fold1.pkl'))
     f1_aptos15['fold'] = 1
 
-    f1_idrid = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold1_gifted_visvesvaraya_on_aptos2019_fold1.pkl'))
+    f1_idrid = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold1_gifted_visvesvaraya_on_aptos2019_fold1.pkl'))
     f1_idrid['fold'] = 1
 
-    f2_aptos15 = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold2_trusting_nightingale_on_aptos2019_fold2.pkl'))
+    f2_aptos15 = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold2_trusting_nightingale_on_aptos2019_fold2.pkl'))
     f2_aptos15['fold'] = 2
 
-    f2_idrid = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold2_sharp_brattain_on_aptos2019_fold2.pkl'))
+    f2_idrid = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold2_sharp_brattain_on_aptos2019_fold2.pkl'))
     f2_idrid['fold'] = 2
 
-    f3_aptos15 = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold3_epic_wing_on_aptos2019_fold3.pkl'))
+    f3_aptos15 = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_aptos2019_fold3_epic_wing_on_aptos2019_fold3.pkl'))
     f3_aptos15['fold'] = 3
 
-    f3_idrid = pd.read_pickle(fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold3_vibrant_minsky_on_aptos2019_fold3.pkl'))
+    f3_idrid = pd.read_pickle(
+        fs.auto_file('reg_seresnext50_rms_512_medium_mse_idrid_fold3_vibrant_minsky_on_aptos2019_fold3.pkl'))
     f3_idrid['fold'] = 3
 
     df_aptos15 = pd.concat([f0_aptos15, f1_aptos15, f2_aptos15, f3_aptos15])
@@ -51,7 +58,8 @@ def main():
     print(X.shape, Y.shape)
 
     x_train, x_test, y_train, y_test, y_hat_train, y_hat_test = train_test_split(X, Y,
-                                                                                 to_numpy(regression_to_class(regression)),
+                                                                                 to_numpy(
+                                                                                     regression_to_class(regression)),
                                                                                  stratify=Y,
                                                                                  test_size=0.25,
                                                                                  random_state=0)

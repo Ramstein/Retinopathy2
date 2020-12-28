@@ -1,10 +1,10 @@
-import cv2
 import math
+
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from pytorch_toolbelt.utils import fs
-
 from retinopathy.lib.augmentations import CropBlackRegions
 
 
@@ -86,7 +86,7 @@ def test_fisheye_undistortion(image_fname):
         # D = np.array([-2.57614020e-01, 8.77086999e-02, -2.56970803e-04, -5.93390389e-04])
         D = np.array([[k_real], [k_real], [0], [0], ], dtype=np.float32)
 
-        und = removeFisheyeLensDist(image, K, D, DIM=(768,768))
+        und = removeFisheyeLensDist(image, K, D, DIM=(768, 768))
         cv2.imshow('Test', und)
         # cv2.waitKey(1)
 

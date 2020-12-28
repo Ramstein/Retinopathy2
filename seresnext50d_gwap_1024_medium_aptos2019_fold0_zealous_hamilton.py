@@ -47,7 +47,7 @@ hyperparameters = {
     "size": 1024,
     "weight_decay": 0.0001,
     #   "weight_decay_step": null,
-    "dropout": 0.0,
+    "dropout": 0.4,
     "warmup": 0,
     #   "experiment": null
 }

@@ -132,7 +132,7 @@ class MBConvBlock(nn.Module):
             out_channels=oup,
             groups=oup,  # groups makes it depthwise
             kernel_size=block_args.kernel_size,
-            padding=block_args.kernel_size//2,
+            padding=block_args.kernel_size // 2,
             stride=block_args.stride,
             bias=False)
         kaiming_normal_(self.depthwise_conv.weight,

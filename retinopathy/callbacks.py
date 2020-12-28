@@ -1,9 +1,9 @@
 import itertools
+import math
 import os
 from functools import partial
 from typing import List, Dict
 
-import math
 import numpy as np
 import pandas as pd
 import torch
@@ -14,7 +14,7 @@ from catalyst.utils import get_optimizer_momentum
 from pytorch_toolbelt.utils.catalyst import get_tensorboard_logger
 from pytorch_toolbelt.utils.torch_utils import to_numpy
 from pytorch_toolbelt.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
-from sklearn.metrics import confusion_matrix, f1_score, fbeta_score
+from sklearn.metrics import confusion_matrix, fbeta_score
 from torch import nn
 from torch.nn import Module
 

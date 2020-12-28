@@ -22,7 +22,8 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from retinopathy.dataset import RetinopathyDataset
-from retinopathy.factory import get_model, get_loss, get_optimizer, get_optimizable_parameters, get_train_aug, get_test_aug
+from retinopathy.factory import get_model, get_loss, get_optimizer, get_optimizable_parameters, get_train_aug, \
+    get_test_aug
 from retinopathy.visualization import draw_classification_predictions
 
 
@@ -40,7 +41,8 @@ def get_dataloaders(data_dir, batch_size, num_workers,
     x = dataset['id_code']
     y = dataset['is_test']
 
-    train_x, valid_x, train_y, valid_y = train_test_split(x, y, random_state=42, test_size=0.1, shuffle=True, stratify=y)
+    train_x, valid_x, train_y, valid_y = train_test_split(x, y, random_state=42, test_size=0.1, shuffle=True,
+                                                          stratify=y)
     if fast:
         train_x = train_x[:32]
         train_y = train_y[:32]
@@ -50,11 +52,14 @@ def get_dataloaders(data_dir, batch_size, num_workers,
 
         num_workers = 0
 
-    train_ds = RetinopathyDataset(train_x, train_y, transform=get_train_aug(image_size, augmentation), target_as_array=True)
+    train_ds = RetinopathyDataset(train_x, train_y, transform=get_train_aug(image_size, augmentation),
+                                  target_as_array=True)
     valid_ds = RetinopathyDataset(valid_x, valid_y, transform=get_test_aug(image_size), target_as_array=True)
 
-    train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True, pin_memory=True, drop_last=True, num_workers=num_workers)
-    valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=False, pin_memory=True, drop_last=False, num_workers=num_workers)
+    train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True, pin_memory=True, drop_last=True,
+                          num_workers=num_workers)
+    valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=False, pin_memory=True, drop_last=False,
+                          num_workers=num_workers)
 
     return train_dl, valid_dl
 
@@ -63,16 +68,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
     parser.add_argument('--fast', action='store_true')
-    parser.add_argument('-dd', '--data-dir', type=str, default='data', help='Data directory for INRIA sattelite dataset')
+    parser.add_argument('-dd', '--data-dir', type=str, default='data',
+                        help='Data directory for INRIA sattelite dataset')
     parser.add_argument('-m', '--model', type=str, default='cls_resnet18', help='')
     parser.add_argument('-b', '--batch-size', type=int, default=8, help='Batch Size during training, e.g. -b 64')
     parser.add_argument('-e', '--epochs', type=int, default=100, help='Epoch to run')
-    parser.add_argument('-es', '--early-stopping', type=int, default=None, help='Maximum number of epochs without improvement')
+    parser.add_argument('-es', '--early-stopping', type=int, default=None,
+                        help='Maximum number of epochs without improvement')
     parser.add_argument('-fe', '--freeze-encoder', action='store_true')
     parser.add_argument('-lr', '--learning-rate', type=float, default=1e-4, help='Initial learning rate')
     parser.add_argument('-l', '--criterion', type=str, default='bce', help='Criterion')
     parser.add_argument('-o', '--optimizer', default='Adam', help='Name of the optimizer')
-    parser.add_argument('-c', '--checkpoint', type=str, default=None, help='Checkpoint filename to use as initial model weights')
+    parser.add_argument('-c', '--checkpoint', type=str, default=None,
+                        help='Checkpoint filename to use as initial model weights')
     parser.add_argument('-w', '--workers', default=multiprocessing.cpu_count(), type=int, help='Num workers')
     parser.add_argument('-a', '--augmentations', default='hard', type=str, help='')
     parser.add_argument('-tta', '--tta', default=None, type=str, help='Type of TTA to use [fliplr, d4]')

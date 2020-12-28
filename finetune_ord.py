@@ -17,8 +17,7 @@ from pytorch_toolbelt.utils.torch_utils import count_parameters, \
 
 from retinopathy.callbacks import LPRegularizationCallback, \
     CustomOptimizerCallback
-from retinopathy.dataset import get_class_names, \
-    get_datasets, get_dataloaders
+from retinopathy.dataset import get_datasets, get_dataloaders
 from retinopathy.factory import get_model, get_optimizer, \
     get_optimizable_parameters, get_scheduler
 from retinopathy.scripts.clean_checkpoint import clean_checkpoint
@@ -72,7 +71,6 @@ def main():
     args = parser.parse_args()
 
     checkpoints = args.checkpoints
-
 
     current_time = datetime.now().strftime('%b%d_%H_%M')
     random_name = get_random_name()

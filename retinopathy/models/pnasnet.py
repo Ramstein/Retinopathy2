@@ -401,4 +401,3 @@ def pnasnet5large(num_classes=1001, pretrained='imagenet'):
     else:
         model = PNASNet5Large(num_classes=num_classes)
     return model
-

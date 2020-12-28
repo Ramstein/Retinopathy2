@@ -6,27 +6,23 @@ import json
 import multiprocessing
 import os
 from datetime import datetime
-from functools import partial
 
 import torch
-from catalyst.dl import SupervisedRunner, EarlyStoppingCallback, CriterionCallback
+from catalyst.dl import SupervisedRunner, EarlyStoppingCallback
 from catalyst.utils import load_checkpoint, unpack_checkpoint
 from pytorch_toolbelt.utils import fs
-from pytorch_toolbelt.utils.catalyst import ShowPolarBatchesCallback
 from pytorch_toolbelt.utils.random import set_manual_seed, get_random_name
 from pytorch_toolbelt.utils.torch_utils import count_parameters, \
     set_trainable
 
 from retinopathy.callbacks import L2RegularizationCallback, CustomOptimizerCallback, \
-    LPRegularizationCallback, ShowEmbeddingsCallback
+    LPRegularizationCallback
 from retinopathy.dataset import get_class_names, \
     get_datasets, get_dataloaders
 from retinopathy.factory import get_model, get_optimizer, \
     get_optimizable_parameters, get_scheduler
-from retinopathy.losses import MagnetLoss
 from retinopathy.scripts.clean_checkpoint import clean_checkpoint
 from retinopathy.train_utils import report_checkpoint, get_reg_callbacks, get_ord_callbacks, get_cls_callbacks
-from retinopathy.visualization import draw_classification_predictions
 
 
 def main():

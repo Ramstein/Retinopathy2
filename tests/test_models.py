@@ -1,9 +1,7 @@
-import cv2
 import pytest
 import torch
-from pytorch_toolbelt.utils.torch_utils import count_parameters, tensor_from_rgb_image
+from pytorch_toolbelt.utils.torch_utils import count_parameters
 
-from retinopathy.augmentations import get_test_transform
 from retinopathy.factory import get_model
 from retinopathy.models.heads.rnn import LSTMBottleneck
 

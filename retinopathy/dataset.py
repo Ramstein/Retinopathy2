@@ -239,7 +239,7 @@ def get_aptos2019_test(data_dir):
 def get_aptos2015_train(dataset_dir, healthy_eye_fraction=1):
     aptos2015_train = pd.read_csv(os.path.join(dataset_dir, 'train_labels.csv'))
     # aptos2015_train['image_path'] = aptos2015_train['id_code'].apply(
-        #     lambda x: os.path.join(dataset_dir, 'train_images_768', f'{x}.png'))
+    #     lambda x: os.path.join(dataset_dir, 'train_images_768', f'{x}.png'))
     aptos2015_train['image_path'] = aptos2015_train['id_code'].apply(
         lambda x: os.path.join(dataset_dir, 'train_images_768', f'{x}.jpeg'))
     x = np.array(aptos2015_train['image_path'])

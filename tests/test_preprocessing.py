@@ -1,13 +1,10 @@
-import random
-
 import albumentations as A
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from pytorch_toolbelt.utils import fs
 
-from retinopathy.augmentations import AddMicroaneurisms, create_microaneurisms, \
-    CropBlackRegions, create_cotton_wool_spots, AddCottonWools
+from retinopathy.augmentations import AddMicroaneurisms, CropBlackRegions, AddCottonWools
 from retinopathy.preprocessing import crop_black, clahe_preprocessing, unsharp_mask, red_free
 
 

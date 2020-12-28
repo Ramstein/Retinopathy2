@@ -91,22 +91,22 @@ def main():
     augmentations = args.augmentations
     fp16 = args.fp16
     freeze_encoder = args.freeze_encoder
-    criterion_reg_name = args.criterion_reg
-    criterion_cls_name = args.criterion_cls
+    criterion_reg_name = args.criterion_reg = ["mse"]
+    criterion_cls_name = args.criterion_cls = ["focal_kappa"]
     criterion_ord_name = args.criterion_ord
-    folds = args.fold
+    folds = args.fold = [0, 1, 2, 3]
     mixup = args.mixup
     balance = args.balance
     balance_datasets = args.balance_datasets
     use_swa = args.swa
     show_batches = args.show
     scheduler_name = args.scheduler
-    verbose = args.verbose
+    verbose = args.verbose = True
     weight_decay = args.weight_decay
     use_idrid = args.use_idrid
     use_messidor = args.use_messidor
-    use_aptos2015 = args.use_aptos2015
-    use_aptos2019 = args.use_aptos2019
+    use_aptos2015 = args.use_aptos2015 = True
+    use_aptos2019 = args.use_aptos2019 = True
     warmup = args.warmup
     dropout = args.dropout
     use_unsupervised = False

@@ -53,8 +53,8 @@ def main():
     parser.add_argument('--criterion-reg', type=str, default=['mse'], nargs='+', help='Criterion')
     parser.add_argument('--criterion-ord', type=str, default=None, nargs='+', help='Criterion')
     parser.add_argument('--criterion-cls', type=str, default=None, nargs='+', help='Criterion')
-    parser.add_argument('-l1', type=float, default=0, help='L1 regularization loss')
-    parser.add_argument('-l2', type=float, default=0, help='L2 regularization loss')
+    parser.add_argument('-l1', '--l-1', type=float, default=0, help='L1 regularization loss')
+    parser.add_argument('-l2', '--l-2', type=float, default=0, help='L2 regularization loss')
     parser.add_argument('-o', '--optimizer', default='Adam', help='Name of the optimizer')
     parser.add_argument('-p', '--preprocessing', default=None, help='Preprocessing method')
     parser.add_argument('-c', '--checkpoint', type=str, default=None,

@@ -33,8 +33,8 @@ hyperparameters = {
     # "criterion_cls": [
     #     "focal_kappa"
     # ],
-    "l-1": 0.0002,
-    # "l-2": 0,
+    "l1": 0.0002,
+    # "l2": 0,
     "optimizer": "AdamW",
     #   "preprocessing": null,
     #   "checkpoint": null,

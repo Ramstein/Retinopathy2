@@ -53,8 +53,8 @@ def main():
     parser.add_argument('--criterion-reg', type=str, default=['mse'], nargs='+', help='Criterion')
     parser.add_argument('--criterion-ord', type=str, default=None, nargs='+', help='Criterion')
     parser.add_argument('--criterion-cls', type=str, default=None, nargs='+', help='Criterion')
-    parser.add_argument('-l1', '--l-1', type=float, default=0, help='L1 regularization loss')
-    parser.add_argument('-l2', '--l-2', type=float, default=0, help='L2 regularization loss')
+    parser.add_argument('--l1', type=float, default=0, help='L1 regularization loss')
+    parser.add_argument('--l2', type=float, default=0, help='L2 regularization loss')
     parser.add_argument('-o', '--optimizer', default='Adam', help='Name of the optimizer')
     parser.add_argument('-p', '--preprocessing', default=None, help='Preprocessing method')
     parser.add_argument('-c', '--checkpoint', type=str, default=None,
@@ -186,7 +186,7 @@ def main():
         train_ds, valid_ds, train_sizes = get_datasets(data_dir=data_dir,
                                                        use_aptos2019=use_aptos2019,
                                                        use_aptos2015=use_aptos2015,
-                                                       use_aptos2015_pl1=True,
+                                                       use_aptos2015_pl1=False, #Don't use pseudolabels, assertion error
                                                        use_aptos2015_test_private=True,
                                                        use_idrid=use_idrid,
                                                        use_messidor=use_messidor,

@@ -12,12 +12,12 @@ hyperparameters = {
     # "use_aptos2019": "",
     # "verbose": "",
     #   "coarse": false,
-    "accumulation_steps": 1,
-    "data_dir": "/opt/ml/input/data",
+    "accumulation-steps": 1,
+    "data-dir": "/opt/ml/input/data",
     "model": "seresnext50d_gwap",
-    "batch_size": 64,
+    "batch-size": 64,
     "epochs": 200,
-    "early_stopping": 10,
+    "early-stopping": 10,
     # "fold": [
     #     0,
     #     1,
@@ -25,7 +25,7 @@ hyperparameters = {
     #     3
     # ],
     #   "freeze_encoder": false,
-    "learning_rate": 0.0003,
+    "learning-rate": 0.0003,
     # "criterion_reg": [
     #     "mse"
     # ],
@@ -34,7 +34,7 @@ hyperparameters = {
     #     "focal_kappa"
     # ],
     "l1": 0.0002,
-    "l2": 0,
+    # "l2": 0,
     "optimizer": "AdamW",
     #   "preprocessing": null,
     #   "checkpoint": null,
@@ -45,9 +45,9 @@ hyperparameters = {
     #   "fp16": true,
     "scheduler": "multistep",
     "size": 1024,
-    "weight_decay": 0.0001,
+    "weight-decay": 0.0001,
     #   "weight_decay_step": null,
     "dropout": 0.4,
-    "warmup": 0,
+    # "warmup": 0,
     #   "experiment": null
 }

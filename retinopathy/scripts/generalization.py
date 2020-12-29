@@ -127,7 +127,7 @@ def evaluate_generalization(checkpoints, num_folds=4):
             model.load_state_dict(checkpoint['model_state_dict'])
             model = model.eval().cuda()
             if torch.cuda.device_count() > 1:
-                model = nn.DataParallel(model)
+                model = nn.DataParallel(model, device_ids=[id for id in range(torch.cuda.device_count())])
 
             for dataset_index, dataset_validate_on in enumerate(class_names):
                 # For each available dataset

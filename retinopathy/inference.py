@@ -171,7 +171,7 @@ def run_model_inference_via_dataset(dataset: RetinopathyDataset,
     with torch.no_grad():
         model = model.cuda()
         if torch.cuda.device_count() > 1:
-            model = nn.DataParallel(model)
+            model = nn.DataParallel(model, device_ids=[id for id in range(torch.cuda.device_count())])
         model = model.eval()
 
         data_loader = DataLoader(dataset, batch_size,
@@ -246,7 +246,7 @@ def run_models_inference_via_dataset(model_checkpoints: List[str],
 
         model = model.cuda()
         if torch.cuda.device_count() > 1:
-            model = nn.DataParallel(model)
+            model = nn.DataParallel(model, device_ids=[id for id in range(torch.cuda.device_count())])
         model = model.eval()
 
         models.append(model)

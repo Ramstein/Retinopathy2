@@ -15,7 +15,7 @@ hyperparameters = {
     "accumulation-steps": 1,
     "data-dir": "/opt/ml/input/data",
     "model": "seresnext50d_gwap",
-    "batch-size": 56,
+    "batch-size": 32,
     "epochs": 200,
     "early-stopping": 10,
     # "fold": [

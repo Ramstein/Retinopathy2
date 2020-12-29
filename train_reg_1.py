@@ -77,7 +77,7 @@ def main():
     args = parser.parse_args()
 
     data_dir = args.data_dir
-    num_workers = args.workers
+    num_workers = args.workers =8
     num_epochs = args.epochs
     batch_size = args.batch_size
     learning_rate = args.learning_rate
@@ -202,7 +202,8 @@ def main():
 
         train_loader, valid_loader = get_dataloaders(train_ds, valid_ds,
                                                      batch_size=batch_size,
-                                                     num_workers=num_workers,
+                                                     # num_workers=num_workers,
+                                                     num_workers=8, # 8 gpus
                                                      train_sizes=train_sizes,
                                                      balance=balance,
                                                      balance_datasets=balance_datasets,

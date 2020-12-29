@@ -15,7 +15,7 @@ hyperparameters = {
     "accumulation-steps": 1,
     "data-dir": "/opt/ml/input/data",
     "model": "seresnext50d_gwap",
-    "batch-size": 64,
+    "batch-size": 56,
     "epochs": 200,
     "early-stopping": 10,
     # "fold": [
@@ -38,7 +38,7 @@ hyperparameters = {
     "optimizer": "AdamW",
     #   "preprocessing": null,
     #   "checkpoint": null,
-    #   "workers": 64,
+      "workers": 8,
     "augmentations": "medium",
     #   "tta": null,
     #   "transfer": null,
@@ -47,7 +47,7 @@ hyperparameters = {
     "size": 1024,
     "weight-decay": 0.0001,
     #   "weight_decay_step": null,
-    "dropout": 0.4,
+    "dropout": 0.2,
     # "warmup": 0,
     #   "experiment": null
 }

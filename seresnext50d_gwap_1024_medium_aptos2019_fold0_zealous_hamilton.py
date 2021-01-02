@@ -13,7 +13,7 @@ hyperparameters = {
     # "verbose": "",
     #   "coarse": false,
     "accumulation-steps": 1,
-    "data-dir": "/opt/ml/input/data",
+    "data-dir": "/opt/ml/input/data",  # in SageMaker instance data-dir = '/home/ec2-user/SageMaker/data/'
     "model": "seresnext50d_gwap",
     "batch-size": 32,
     "epochs": 200,

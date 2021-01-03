@@ -50,7 +50,7 @@ def main():
     checkpoint_fname = args.input  # pass just single checkpoint filename as arg
 
     '''Not Changing variables'''
-    data_dir = '/opt/ml/'
+    data_dir = '/opt/ml/code/'
     checkpoint_path = os.path.join(data_dir, 'model', checkpoint_fname)
     current_milli_time = lambda: str(round(time.time() * 1000))
 

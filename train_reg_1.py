@@ -149,33 +149,18 @@ def main():
             checkpoint_prefix = experiment
 
         directory_prefix = f'{current_time}/{checkpoint_prefix}'
-        log_dir = os.path.join(os.environ['SM_OUTPUT_DATA_DIR'], 'runs', directory_prefix)
+        log_dir = os.path.join(os.environ['SM_MODEL_DIR'], 'runs', directory_prefix)
         os.makedirs(log_dir, exist_ok=False)
 
         # copying a folder to output for testing
         from shutil import copyfile
         copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(log_dir, "toolbelt.tar.gz"))
-        print('copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(log_dir, "log_dir.tar.gz"))')
+        print('copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(SM_MODEL_DIR, "log_dir.tar.gz"))')
         copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz",
                  os.path.join(os.environ["SM_OUTPUT_DATA_DIR"], "SM_OUTPUT_DATA_DIR.tar.gz"))
         print(
             'copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(os.environ["SM_OUTPUT_DATA_DIR"], "SM_OUTPUT_DATA_DIR.tar.gz"))')
-        copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz",
-                 os.path.join(os.environ["SM_MODEL_DIR"], "toolbelt.tar.gz"))
-        print(
-            'copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(os.environ["SM_MODEL_DIR"], "SM_MODEL_DIR.tar.gz"))')
-        copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz",
-                 os.path.join(os.environ["SM_OUTPUT_DIR"], "toolbelt.tar.gz"))
-        print(
-            'copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(os.environ["SM_OUTPUT_DIR"], "SM_OUTPUT_DIR.tar.gz"))')
-        copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz",
-                 os.path.join(os.environ["SM_OUTPUT_DIR"], "toolbelt.tar.gz"))
-        print(
-            'copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(os.environ["SM_OUTPUT_DIR"], "SM_OUTPUT_DIR.tar.gz"))')
-        copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz",
-                 os.path.join(os.environ["SM_OUTPUT_INTERMEDIATE_DIR"], "toolbelt.tar.gz"))
-        print(
-            'copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(os.environ["SM_OUTPUT_INTERMEDIATE_DIR"], "SM_OUTPUT_INTERMEDIATE_DIR.tar.gz"))')
+
         import sys
         sys.exit()
 

@@ -152,6 +152,12 @@ def main():
         log_dir = os.path.join(os.environ['SM_OUTPUT_DATA_DIR'], 'runs', directory_prefix)
         os.makedirs(log_dir, exist_ok=False)
 
+        # copying a folder to output for testing
+        from shutil import copyfile
+        copyfile('/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz', log_dir)
+        import sys
+        sys.exit()
+
         config_fname = os.path.join(log_dir, f'{checkpoint_prefix}.json')
         with open(config_fname, 'w') as f:
             train_session_args = vars(args)

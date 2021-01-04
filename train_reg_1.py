@@ -88,12 +88,12 @@ def main():
     image_size = (args.size, args.size)
     fast = args.fast
     augmentations = args.augmentations
-    fp16 = args.fp16= True
+    fp16 = args.fp16 = True
     freeze_encoder = args.freeze_encoder
     criterion_reg_name = args.criterion_reg = ["mse"]
     criterion_cls_name = args.criterion_cls = ["focal_kappa"]
     criterion_ord_name = args.criterion_ord
-    folds = args.fold =[0,1,2,3]
+    folds = args.fold = [0, 1, 2, 3]
     mixup = args.mixup
     balance = args.balance
     balance_datasets = args.balance_datasets
@@ -149,7 +149,7 @@ def main():
             checkpoint_prefix = experiment
 
         directory_prefix = f'{current_time}/{checkpoint_prefix}'
-        log_dir = os.path.join(os.environ['SM_MODEL_DIR'], 'runs', directory_prefix)
+        log_dir = os.path.join(os.environ['SM_OUTPUT_DATA_DIR'], 'runs', directory_prefix)
         os.makedirs(log_dir, exist_ok=False)
 
         config_fname = os.path.join(log_dir, f'{checkpoint_prefix}.json')

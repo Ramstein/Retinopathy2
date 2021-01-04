@@ -202,7 +202,7 @@ def main():
                                                        fold=fold,
                                                        folds=4)
 
-        train_loader, valid_loader = get_dataloaders(train_ds, valid_ds,
+        train_loader, valid_loader = get_dataloaders(train_ds[:1000], valid_ds[:1000],
                                                      batch_size=batch_size,
                                                      num_workers=num_workers,
                                                      train_sizes=train_sizes,

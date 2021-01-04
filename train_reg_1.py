@@ -12,8 +12,7 @@ from catalyst.dl import SupervisedRunner, EarlyStoppingCallback
 from catalyst.utils import load_checkpoint, unpack_checkpoint
 from pytorch_toolbelt.utils import fs
 from pytorch_toolbelt.utils.random import set_manual_seed, get_random_name
-from pytorch_toolbelt.utils.torch_utils import count_parameters, \
-    set_trainable
+from pytorch_toolbelt.utils.torch_utils import count_parameters, set_trainable
 
 from retinopathy.callbacks import LPRegularizationCallback, \
     CustomOptimizerCallback
@@ -62,7 +61,7 @@ def main():
     parser.add_argument('-w', '--workers', default=multiprocessing.cpu_count(), type=int, help='Num workers')
     parser.add_argument('-a', '--augmentations', default='medium', type=str, help='')
     parser.add_argument('-tta', '--tta', default=None, type=str, help='Type of TTA to use [fliplr, d4]')
-    parser.add_argument('-t', '--transfer', default=None, type=str, help='')
+    parser.add_argument('-t', '--transfer', default=None, type=str, help='pass the path of the weights for the model')
     parser.add_argument('--fp16', action='store_true')
     parser.add_argument('-s', '--scheduler', default='multistep', type=str, help='')
     parser.add_argument('--size', default=512, type=int, help='Image size for training & inference')
@@ -89,12 +88,12 @@ def main():
     image_size = (args.size, args.size)
     fast = args.fast
     augmentations = args.augmentations
-    fp16 = args.fp16
+    fp16 = args.fp16= True
     freeze_encoder = args.freeze_encoder
     criterion_reg_name = args.criterion_reg = ["mse"]
     criterion_cls_name = args.criterion_cls = ["focal_kappa"]
     criterion_ord_name = args.criterion_ord
-    folds = args.fold = [0, 1, 2, 3]
+    folds = args.fold =[0,1,2,3]
     mixup = args.mixup
     balance = args.balance
     balance_datasets = args.balance_datasets
@@ -150,7 +149,7 @@ def main():
             checkpoint_prefix = experiment
 
         directory_prefix = f'{current_time}/{checkpoint_prefix}'
-        log_dir = os.path.join('runs', directory_prefix)
+        log_dir = os.path.join(os.environ['SM_MODEL_DIR'], 'runs', directory_prefix)
         os.makedirs(log_dir, exist_ok=False)
 
         config_fname = os.path.join(log_dir, f'{checkpoint_prefix}.json')
@@ -163,7 +162,9 @@ def main():
         model = get_model(model_name, num_classes=num_classes, dropout=dropout).cuda()
 
         if args.transfer:
-            transfer_checkpoint = fs.auto_file(args.transfer)
+            args.transfer = os.path.join(data_dir, 'pretrained/se_resnext50_32x4d-a260b3a4.pth')
+            transfer_checkpoint = fs.auto_file(
+                args.transfer)  # pass the complete path of the checkpoint '/home/ec2-user/SageMaker/IntelCervicalCancer/bbox_data_preproc.py'
             print("Transfering weights from model checkpoint",
                   transfer_checkpoint)
             checkpoint = load_checkpoint(transfer_checkpoint)
@@ -186,7 +187,8 @@ def main():
         train_ds, valid_ds, train_sizes = get_datasets(data_dir=data_dir,
                                                        use_aptos2019=use_aptos2019,
                                                        use_aptos2015=use_aptos2015,
-                                                       use_aptos2015_pl1=False, #Don't use pseudolabels, assertion error
+                                                       use_aptos2015_pl1=False,
+                                                       # Don't use pseudolabels, assertion error
                                                        use_aptos2015_test_private=True,
                                                        use_idrid=use_idrid,
                                                        use_messidor=use_messidor,
@@ -203,7 +205,6 @@ def main():
         train_loader, valid_loader = get_dataloaders(train_ds, valid_ds,
                                                      batch_size=batch_size,
                                                      num_workers=num_workers,
-                                                     # num_workers=8, # 8 gpus
                                                      train_sizes=train_sizes,
                                                      balance=balance,
                                                      balance_datasets=balance_datasets,
@@ -257,6 +258,7 @@ def main():
         main_metric = 'reg/kappa'
         if criterion_reg_name is not None:
             cb, crits = get_reg_callbacks(criterion_reg_name, class_names=class_names, show=show_batches)
+            callbacks += cb
             callbacks += cb
             criterions.update(crits)
 

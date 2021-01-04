@@ -25,7 +25,7 @@ hyperparameters = {
     #     3
     # ],
     #   "freeze_encoder": false,
-    "learning-rate": 0.0003,
+    "learning-rate": 0.0001,
     # "criterion_reg": [
     #     "mse"
     # ],
@@ -38,10 +38,10 @@ hyperparameters = {
     "optimizer": "AdamW",
     #   "preprocessing": null,
     #   "checkpoint": null,
-      "workers": 8,
+    #   "workers": 8, # default to multiprocessing.cpu_count()
     "augmentations": "medium",
     #   "tta": null,
-    #   "transfer": null,
+      "transfer": 'se_resnext50_32x4d-a260b3a4.pth',
     #   "fp16": true,
     "scheduler": "multistep",
     "size": 1024,

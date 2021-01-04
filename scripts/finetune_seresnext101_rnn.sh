@@ -11,12 +11,12 @@
 #sleep 15
 
 python train_ord.py -m seresnext101_rnn \
-    -a hard2 -d 0.5 -b 48 --fp16 --size 512 -o RAdam -wd 1e-4 -s multistep -lr 4e-3\
-    --epochs 100 \
-    --fine-tune 50 \
-    --use-aptos2019 --use-idrid --use-messidor --use-aptos2019-test-pl1\
-    -f 0 --seed 10 \
-    -v --criterion-ord mse -c runs/Sep05_10_35/seresnext101_rnn_512_hard2_aptos2019_messidor_idrid_pl1_fold0_admiring_boyd/warmup/checkpoints/best.pth
+  -a hard2 -d 0.5 -b 48 --fp16 --size 512 -o RAdam -wd 1e-4 -s multistep -lr 4e-3 \
+  --epochs 100 \
+  --fine-tune 50 \
+  --use-aptos2019 --use-idrid --use-messidor --use-aptos2019-test-pl1 \
+  -f 0 --seed 10 \
+  -v --criterion-ord mse -c runs/Sep05_10_35/seresnext101_rnn_512_hard2_aptos2019_messidor_idrid_pl1_fold0_admiring_boyd/warmup/checkpoints/best.pth
 sleep 15
 
 #python train_ord.py -m seresnext101_rnn \

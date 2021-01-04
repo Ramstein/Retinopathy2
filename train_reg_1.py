@@ -150,19 +150,11 @@ def main():
 
         directory_prefix = f'{current_time}/{checkpoint_prefix}'
         log_dir = os.path.join(os.environ['SM_MODEL_DIR'], 'runs', directory_prefix)
+        log_dir1 = os.path.join(os.environ['SM_OUTPUT_DATA_DIR'], 'runs',
+                                directory_prefix)  # on two places saving the checkpoint
+
         os.makedirs(log_dir, exist_ok=False)
-
-        # copying a folder to output for testing
-        from shutil import copyfile
-        copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(log_dir, "toolbelt.tar.gz"))
-        print('copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(SM_MODEL_DIR, "log_dir.tar.gz"))')
-        copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz",
-                 os.path.join(os.environ["SM_OUTPUT_DATA_DIR"], "SM_OUTPUT_DATA_DIR.tar.gz"))
-        print(
-            'copyfile("/opt/ml/code/deps/pytorch_toolbelt-0.1.3.tar.gz", os.path.join(os.environ["SM_OUTPUT_DATA_DIR"], "SM_OUTPUT_DATA_DIR.tar.gz"))')
-
-        import sys
-        sys.exit()
+        os.makedirs(log_dir1, exist_ok=False)
 
         config_fname = os.path.join(log_dir, f'{checkpoint_prefix}.json')
         with open(config_fname, 'w') as f:
@@ -370,6 +362,9 @@ def main():
 
         best_checkpoint = os.path.join(log_dir, 'checkpoints', 'best.pth')
         model_checkpoint = os.path.join(log_dir, 'checkpoints', f'{checkpoint_prefix}.pth')
+        clean_checkpoint(best_checkpoint, model_checkpoint)
+        best_checkpoint = os.path.join(log_dir1, 'checkpoints', 'best.pth')
+        model_checkpoint = os.path.join(log_dir1, 'checkpoints', f'{checkpoint_prefix}.pth')
         clean_checkpoint(best_checkpoint, model_checkpoint)
 
 

@@ -360,11 +360,17 @@ def main():
 
         del runner, callbacks, loaders, optimizer, model, criterions, scheduler
 
-        best_checkpoint = os.path.join(log_dir, 'checkpoints', 'best.pth')
-        model_checkpoint = os.path.join(log_dir, 'checkpoints', f'{checkpoint_prefix}.pth')
+        #### SM_MODEL_DIR
+        checkpoint_dir = os.path.join(log_dir, 'checkpoints')
+        os.makedirs(checkpoint_dir, exist_ok=False)
+        best_checkpoint = os.path.join(checkpoint_dir, 'best.pth')
+        model_checkpoint = os.path.join(checkpoint_dir, '{checkpoint_prefix}.pth')
         clean_checkpoint(best_checkpoint, model_checkpoint)
-        best_checkpoint = os.path.join(log_dir1, 'checkpoints', 'best.pth')
-        model_checkpoint = os.path.join(log_dir1, 'checkpoints', f'{checkpoint_prefix}.pth')
+
+        #### SM_OUTPUT_DATA_DIR
+        checkpoint_dir = os.path.join(log_dir1, 'checkpoints')
+        os.makedirs(checkpoint_dir, exist_ok=False)
+        model_checkpoint = os.path.join(checkpoint_dir, '{checkpoint_prefix}.pth')
         clean_checkpoint(best_checkpoint, model_checkpoint)
 
 

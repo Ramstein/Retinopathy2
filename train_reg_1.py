@@ -94,6 +94,7 @@ def main():
     criterion_cls_name = args.criterion_cls = ["focal_kappa"]
     criterion_ord_name = args.criterion_ord
     folds = args.fold = [0, 1, 2, 3]
+    transfer = True
     mixup = args.mixup
     balance = args.balance
     balance_datasets = args.balance_datasets
@@ -165,12 +166,11 @@ def main():
         num_classes = len(class_names)
         model = get_model(model_name, num_classes=num_classes, dropout=dropout).cuda()
 
-        if args.transfer:
-            args.transfer = os.path.join(data_dir, 'pretrained', 'se_resnext50_32x4d-a260b3a4.pth')
-            transfer_checkpoint = fs.auto_file(
-                args.transfer)  # pass the complete path of the checkpoint '/home/ec2-user/SageMaker/IntelCervicalCancer/bbox_data_preproc.py'
-            print("Transfering weights from model checkpoint",
-                  transfer_checkpoint)
+        # if args.transfer:
+        if transfer:
+            # pass the complete path of the checkpoint '/home/ec2-user/SageMaker/IntelCervicalCancer/bbox_data_preproc.py'
+            transfer_checkpoint = fs.auto_file(os.path.join(data_dir, 'pretrained', 'se_resnext50_32x4d-a260b3a4.pth'))
+            print("Transferring weights from model checkpoint", transfer_checkpoint)
             checkpoint = load_checkpoint(transfer_checkpoint)
             pretrained_dict = checkpoint['model_state_dict']
 

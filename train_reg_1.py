@@ -166,7 +166,7 @@ def main():
         model = get_model(model_name, num_classes=num_classes, dropout=dropout).cuda()
 
         if args.transfer:
-            args.transfer = os.path.join(data_dir, 'pretrained/se_resnext50_32x4d-a260b3a4.pth')
+            args.transfer = os.path.join(data_dir, 'pretrained', 'se_resnext50_32x4d-a260b3a4.pth')
             transfer_checkpoint = fs.auto_file(
                 args.transfer)  # pass the complete path of the checkpoint '/home/ec2-user/SageMaker/IntelCervicalCancer/bbox_data_preproc.py'
             print("Transfering weights from model checkpoint",

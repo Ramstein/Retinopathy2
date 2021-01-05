@@ -464,7 +464,7 @@ def dilated_se_resnet152(num_classes=1000, pretrained='imagenet', dilation=(1, 1
     return model
 
 
-def dilated_se_resnext50_32x4d(num_classes=1000, pretrained='imagenet', dilation=(1, 1, 2, 4), dropout_p=0.1):
+def dilated_se_resnext50_32x4d(num_classes=1000, pretrained=None, dilation=(1, 1, 2, 4), dropout_p=0.1):
     model = SENetD(SEResNeXtBottleneckD, [3, 4, 6, 3], groups=32, reduction=16, dilation=dilation,
                    dropout_p=dropout_p, inplanes=64, input_3x3=False,
                    downsample_kernel_size=1, downsample_padding=0,
@@ -487,11 +487,8 @@ def dilated_se_resnext101_32x4d(num_classes=1000, pretrained='imagenet', dilatio
 
 
 class DilatedSEResNeXt50Encoder(SEResnetEncoder):
-    def __init__(self, pretrained=False, layers=None, dropout=0.):
-        if layers is None:
-            layers = [1, 2, 3, 4]
-        # encoder = dilated_se_resnext50_32x4d(pretrained='imagenet' if pretrained else None, dropout_p=dropout)
-        encoder = dilated_se_resnext50_32x4d(pretrained="", dropout_p=dropout)
+    def __init__(self, pretrained=False, layers=[1, 2, 3, 4], dropout=0.):
+        encoder = dilated_se_resnext50_32x4d(pretrained='imagenet' if pretrained else None, dropout_p=dropout)
         super().__init__(encoder, [64, 256, 512, 1024, 2048], [2, 4, 8, 16, 32], layers)
 
 

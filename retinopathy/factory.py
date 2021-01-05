@@ -79,7 +79,7 @@ class PNasnet5LargeEncoder(EncoderModule):
         return [x]
 
 
-def get_model(model_name, num_classes, pretrained=True, dropout=0.0, **kwargs):
+def get_model(model_name, num_classes, pretrained=False, dropout=0.0, **kwargs):
     keys = model_name.split('_')
     if len(keys) == 2:
         encoder_name, head_name = keys

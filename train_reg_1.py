@@ -178,11 +178,10 @@ def main():
                         collections.OrderedDict([(name, value)]), strict=False)
                 except Exception as e:
                     print(e)
-
             report_checkpoint(checkpoint)
 
         if args.checkpoint:
-            checkpoint = load_checkpoint(os.path.join(data_dir, 'pretrained', 'se_resnext50_32x4d-a260b3a4.pth'))
+            checkpoint = load_checkpoint(os.path.join(data_dir, 'pretrained', args.checkpoint))
             unpack_checkpoint(checkpoint, model=model)
             report_checkpoint(checkpoint)
 

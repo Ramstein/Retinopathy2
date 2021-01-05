@@ -13,10 +13,10 @@ hyperparameters = {
     # "verbose": "",
     #   "coarse": false,
     "accumulation-steps": 1,
-    "data-dir": "/opt/ml/input/data",  # in SageMaker instance data-dir = '/home/ec2-user/SageMaker/data/'
+    "data-dir": "/opt/ml/input/data",
     "model": "seresnext50d_gwap",
-    "batch-size": 32,
-    "epochs": 200,
+    "batch-size": 64,
+    "epochs": 50,
     "early-stopping": 10,
     # "fold": [
     #     0,
@@ -37,17 +37,17 @@ hyperparameters = {
     # "l2": 0,
     "optimizer": "AdamW",
     #   "preprocessing": null,
-    #   "checkpoint": null,
-    #   "workers": 8, # default to multiprocessing.cpu_count()
+      "checkpoint": "se_resnext50_32x4d-a260b3a4.pth",
+#       "workers": 8,
     "augmentations": "medium",
     #   "tta": null,
-      "transfer": 'se_resnext50_32x4d-a260b3a4.pth',
+#     "transfer": "pretrained", # false but still using the last checkpoint for main source
     #   "fp16": true,
     "scheduler": "multistep",
     "size": 1024,
     "weight-decay": 0.0001,
     #   "weight_decay_step": null,
-    "dropout": 0.2,
+#     "dropout": 0.2,
     # "warmup": 0,
     #   "experiment": null
 }

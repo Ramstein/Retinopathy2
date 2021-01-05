@@ -490,7 +490,8 @@ class DilatedSEResNeXt50Encoder(SEResnetEncoder):
     def __init__(self, pretrained=False, layers=None, dropout=0.):
         if layers is None:
             layers = [1, 2, 3, 4]
-        encoder = dilated_se_resnext50_32x4d(pretrained='imagenet' if pretrained else None, dropout_p=dropout)
+        # encoder = dilated_se_resnext50_32x4d(pretrained='imagenet' if pretrained else None, dropout_p=dropout)
+        encoder = dilated_se_resnext50_32x4d(pretrained="", dropout_p=dropout)
         super().__init__(encoder, [64, 256, 512, 1024, 2048], [2, 4, 8, 16, 32], layers)
 
 

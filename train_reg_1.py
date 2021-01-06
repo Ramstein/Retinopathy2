@@ -120,7 +120,7 @@ def main():
 
     if args.deployment:  # "/opt/ml/model/
         import shutil
-        shutil.copyfile(os.path.join(data_dir, "deployment", "last.pth"),
+        shutil.copyfile(os.path.join(data_dir, "deployment", "model.pth"),
                         os.path.join(os.environ['SM_MODEL_DIR'], "model.pth"), )
         sys.exit()
 

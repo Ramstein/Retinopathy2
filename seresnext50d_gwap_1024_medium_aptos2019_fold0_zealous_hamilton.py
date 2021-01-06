@@ -37,17 +37,18 @@ hyperparameters = {
     # "l2": 0,
     "optimizer": "AdamW",
     #   "preprocessing": null,
-      "checkpoint": "se_resnext50_32x4d-a260b3a4.pth",
-#       "workers": 8,
+    "checkpoint": "se_resnext50_32x4d-a260b3a4.pth",
+    #       "workers": 8,
     "augmentations": "medium",
     #   "tta": null,
-#     "transfer": "pretrained", # false but still using the last checkpoint for main source
+    #     "transfer": "pretrained", # false but still using the last checkpoint for main source
     #   "fp16": true,
     "scheduler": "multistep",
     "size": 1024,
     "weight-decay": 0.0001,
     #   "weight_decay_step": null,
-#     "dropout": 0.2,
+    #     "dropout": 0.2,
     # "warmup": 0,
-    #   "experiment": null
+    #   "experiment": null,
+    "deployment": True,
 }

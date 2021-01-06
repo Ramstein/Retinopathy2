@@ -5,6 +5,7 @@ import collections
 import json
 import multiprocessing
 import os
+import sys
 from datetime import datetime
 
 import torch
@@ -72,8 +73,12 @@ def main():
     parser.add_argument('--warmup', default=0, type=int,
                         help='Number of warmup epochs with 0.1 of the initial LR and frozed encoder')
     parser.add_argument('-x', '--experiment', default=None, type=str, help='Dropout before head layer')
+    parser.add_argument('-d', '--deployment', default=False, type=bool, help='Are you going to deploy this model?')
 
     args = parser.parse_args()
+
+    if args.deployment:
+        sys.exit()
 
     data_dir = args.data_dir
     num_workers = args.workers

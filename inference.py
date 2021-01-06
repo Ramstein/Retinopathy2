@@ -96,11 +96,9 @@ def model_fn(model_dir):
                      s3_filename='model.pth',
                      local_path="/opt/ml/model")
     model_path = path.join(model_dir, checkpoint_fname)  # '/opt/ml/model/model.pth'
-    if torch.cuda.is_available():
-        checkpoint = torch.load(model_path)
-    else:
-        # already available in this method torch.load(model_path, map_location=lambda storage, loc: storage)
-        checkpoint = load_checkpoint(model_path)
+
+    # already available in this method torch.load(model_path, map_location=lambda storage, loc: storage)
+    checkpoint = load_checkpoint(model_path)
     params = checkpoint['checkpoint_data']['cmd_args']
 
     report_checkpoint(checkpoint)

@@ -12,3 +12,5 @@ model = PyTorchModel(model_data=model_data,
                      framework_version='1.6.0',
                      py_version='py3',
                      source_dir='code')
+
+

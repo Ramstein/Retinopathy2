@@ -91,8 +91,11 @@ def model_fn(model_dir):
     # parser.add_argument('input', nargs='+')
     # parser.add_argument('--need-features', action='store_true')
     # args = parser.parse_args()
-
-    model_path = path.join("/opt/ml/code/model", checkpoint_fname)
+    download_from_s3(region='us-east-1',
+                     bucket="diabetic-retinopathy",
+                     s3_filename='model.pth',
+                     local_path="/opt/ml/model")
+    model_path = path.join(model_dir, checkpoint_fname)  # '/opt/ml/model/model.pth'
     if torch.cuda.is_available():
         checkpoint = torch.load(model_path)
     else:

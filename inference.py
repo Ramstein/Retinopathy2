@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import argparse
 import json
 import multiprocessing
 from asyncio.log import logger
@@ -23,6 +22,20 @@ from retinopathy.factory import get_model
 from retinopathy.inference import ApplySoftmaxToLogits, FlipLRMultiheadTTA, Flip4MultiheadTTA, \
     MultiscaleFlipLRMultiheadTTA
 from retinopathy.train_utils import report_checkpoint
+
+'''Not Changing variables'''
+data_dir = '/opt/ml/input/data'
+checkpoint_fname = 'model.pth'
+bucket = "diabetic-retinopathy-data-from-radiology"
+images_dir = "/opt/ml/input/data"
+image_size = 1024
+num_workers = multiprocessing.cpu_count()
+need_features = True
+tta = None
+apply_softmax = True
+
+params = {}
+CLASS_NAMES = []
 
 
 def download_from_s3(region='us-east-1', bucket="diabetic-retinopathy-data-from-radiology", s3_filename='test.png',
@@ -73,30 +86,13 @@ def run_image_preprocessing(
                                                                            crop_black=crop_black))
 
 
-'''Not Changing variables'''
-data_dir = '/opt/ml/input/data'
-checkpoint_fname = 'model.pth'
-
-bucket = "diabetic-retinopathy-data-from-radiology"
-images_dir = "/opt/ml/input/data"
-image_size = 1024
-params = {}
-num_workers = multiprocessing.cpu_count()
-CLASS_NAMES = []
-need_features = True
-tta = None
-apply_softmax = True
-
-
 def model_fn(model_dir):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input', nargs='+')
-    parser.add_argument('--need-features', action='store_true')
-    parser.add_argument('-b', '--batch-size', type=int, default=64,
-                        help='Batch Size during training, e.g. -b 64')
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('input', nargs='+')
+    # parser.add_argument('--need-features', action='store_true')
+    # args = parser.parse_args()
 
-    model_path = path.join(model_dir, checkpoint_fname)
+    model_path = path.join("/opt/ml/code/model", checkpoint_fname)
     if torch.cuda.is_available():
         checkpoint = torch.load(model_path)
     else:

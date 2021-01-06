@@ -73,7 +73,7 @@ def main():
     parser.add_argument('--warmup', default=0, type=int,
                         help='Number of warmup epochs with 0.1 of the initial LR and frozed encoder')
     parser.add_argument('-x', '--experiment', default=None, type=str, help='Dropout before head layer')
-    parser.add_argument('-d', '--deployment', default=False, type=bool, help='Are you going to deploy this model?')
+    parser.add_argument('-deploy', '--deployment', default=False, type=bool, help='Are you going to deploy this model?')
 
     args = parser.parse_args()
 

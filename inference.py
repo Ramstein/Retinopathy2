@@ -75,7 +75,7 @@ def run_image_preprocessing(
 '''Not Changing variables'''
 data_dir = '/opt/ml/code/'
 model_name = 'seresnext50d_gap'
-checkpoint_fname = 'se_resnext50_32x4d-a260b3a4.pth'
+checkpoint_fname = 'last.pth'
 checkpoint_path = path.join(data_dir, 'checkpoint', checkpoint_fname)
 
 bucket = "diabetic-retinopathy-data-from-radiology"

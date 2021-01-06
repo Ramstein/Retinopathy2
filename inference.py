@@ -5,16 +5,15 @@ import json
 import multiprocessing
 from asyncio.log import logger
 from collections import defaultdict
-from os import path
+from os import path, makedirs
 
 import boto3
 import torch
 from botocore.exceptions import ClientError
-from catalyst.utils import load_checkpoint
+from catalyst.utils import load_checkpoint, unpack_checkpoint
 from pandas import DataFrame
 from pytorch_toolbelt.utils.torch_utils import to_numpy
 from torch import nn
-from torch.backends import cudnn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -27,7 +26,9 @@ from retinopathy.train_utils import report_checkpoint
 
 
 def download_from_s3(region='us-east-1', bucket="diabetic-retinopathy-data-from-radiology", s3_filename='test.png',
-                     local_path="/opt/ml/code/"):
+                     local_path="/opt/ml/input/data"):
+    if not path.exists(local_path):
+        makedirs(local_path)
     s3_client = boto3.client('s3', region_name=region)
     try:
         s3_client.download_file(bucket, Key=s3_filename, Filename=local_path)
@@ -73,10 +74,8 @@ def run_image_preprocessing(
 
 
 '''Not Changing variables'''
-data_dir = '/opt/ml/code/'
-model_name = 'seresnext50d_gap'
-checkpoint_fname = 'last.pth'
-checkpoint_path = path.join(data_dir, 'checkpoint', checkpoint_fname)
+data_dir = '/opt/ml/input/data'
+checkpoint_fname = 'model.pth'
 
 bucket = "diabetic-retinopathy-data-from-radiology"
 images_dir = "/opt/ml/input/data"
@@ -84,44 +83,46 @@ image_size = 1024
 params = {}
 num_workers = multiprocessing.cpu_count()
 CLASS_NAMES = []
+need_features = True
+tta = None
+apply_softmax = True
 
 
-# filename: inference.py
-
-def model_fn(model_dir,
-             tta=None,
-             model_name=None,
-             apply_softmax=True):
+def model_fn(model_dir):
     parser = argparse.ArgumentParser()
     parser.add_argument('input', nargs='+')
     parser.add_argument('--need-features', action='store_true')
     parser.add_argument('-b', '--batch-size', type=int, default=64,
                         help='Batch Size during training, e.g. -b 64')
-    parser.add_argument('-w', '--workers', type=int, default=multiprocessing.cpu_count(), help='')
     args = parser.parse_args()
 
+    model_path = path.join(model_dir, checkpoint_fname)
     if torch.cuda.is_available():
-        checkpoint = torch.load(checkpoint_path)
+        checkpoint = torch.load(model_path)
     else:
-        # already available in this method torch.load(checkpoint_path, map_location=lambda storage, loc: storage)
-        checkpoint = load_checkpoint(checkpoint_path)
+        # already available in this method torch.load(model_path, map_location=lambda storage, loc: storage)
+        checkpoint = load_checkpoint(model_path)
     params = checkpoint['checkpoint_data']['cmd_args']
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     report_checkpoint(checkpoint)
+    model_name = 'seresnext50d_gap'
 
     if model_name is None:
         model_name = params['model']
 
     coarse_grading = params.get('coarse', False)
 
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+    # torch.backends.cudnn.deterministic = True
+    # torch.backends.cudnn.benchmark = False
 
     CLASS_NAMES = get_class_names(coarse_grading=coarse_grading)
     num_classes = len(CLASS_NAMES)
     model = get_model(model_name, pretrained=False, num_classes=num_classes)
-    model.load_state_dict(checkpoint['model_state_dict'], strict=True)
+    unpack_checkpoint(checkpoint, model=model)
+    report_checkpoint(checkpoint)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+    model = model.eval()
 
     if apply_softmax:
         model = nn.Sequential(model, ApplySoftmaxToLogits())
@@ -140,21 +141,20 @@ def model_fn(model_dir,
             model = model.cuda()
             if torch.cuda.device_count() > 1:
                 model = nn.DataParallel(model, device_ids=[id for id in range(torch.cuda.device_count())])
-        model = model.eval()
 
     return model
 
 
-def input_fn(request_body, content_type='application/json'):
+def input_fn(request_body, request_content_type='application/json'):
     image_name = []
 
-    if content_type == 'application/json':
-        input_data = json.loads(request_body)
-        region = input_data['region']
+    if request_content_type == 'application/json':
+        input_object = json.loads(request_body)
+        region = input_object['region']
 
         for i in range(100):
             try:
-                image_name.append(input_data[f'img{str(i)}'])
+                image_name.append(input_object[f'img{str(i)}'])
             except KeyError as e:
                 print(e)
                 break
@@ -183,14 +183,14 @@ def input_fn(request_body, content_type='application/json'):
                           pin_memory=True,
                           num_workers=num_workers)
 
-    raise Exception(f'Requested unsupported ContentType in content_type {content_type}')
+    raise Exception(f'Requested unsupported ContentType in request_content_type {request_content_type}')
 
 
-def predict_fn(input_data, model, need_features=True):
+def predict_fn(input_object, model):
     predictions = defaultdict(list)
 
-    for batch in tqdm(input_data):
-        input = batch['image'].cuda(non_blocking=True)
+    for batch in tqdm(input_object):
+        input = batch['image']
         if torch.cuda.is_available():
             input = input.cuda(non_blocking=True)
         outputs = model(input)
@@ -205,15 +205,15 @@ def predict_fn(input_data, model, need_features=True):
         if need_features:
             predictions['features'].extend(to_numpy(outputs['features']).tolist())
 
-    del input_data
+    del input_object
     return predictions
 
 
-def output_fn(prediction_output, accept='application/json'):
-    if accept == 'application/json':
-        return json.dumps(prediction_output), accept
+def output_fn(prediction, content_type='application/json'):
+    if content_type == 'application/json':
+        return json.dumps(prediction), content_type
     else:
-        raise Exception(f'Requested unsupported ContentType in Accept:{accept}')
+        raise Exception(f'Requested unsupported ContentType in Accept:{content_type}')
 
 # if __name__ == '__main__':
 #     main()

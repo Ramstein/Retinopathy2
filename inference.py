@@ -87,7 +87,8 @@ def run_image_preprocessing(
 
 
 def model_fn(model_dir):
-    model_path = path.join("/opt/ml/input/data", "deployment", checkpoint_fname)  # '/opt/ml/model/model.pth'
+    # model_path = path.join("/opt/ml/input/data", "deployment", checkpoint_fname)  # '/opt/ml/model/model.pth'
+    model_path = path.join(model_dir, checkpoint_fname)  # '/opt/ml/model/model.pth'
 
     # already available in this method torch.load(model_path, map_location=lambda storage, loc: storage)
     checkpoint = load_checkpoint(model_path)

@@ -41,7 +41,7 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('--coarse', action='store_true')
     parser.add_argument('-acc', '--accumulation-steps', type=int, default=1, help='Number of batches to process')
-    parser.add_argument('-dd', '--data-dir', type=str, default='data', help='Data directory')
+    parser.add_argument('-dd', '--data-dir', type=str, default='/opt/ml/input/data', help='Data directory')
     parser.add_argument('-m', '--model', type=str, default='resnet18_gap', help='')
     parser.add_argument('-b', '--batch-size', type=int, default=8, help='Batch Size during training, e.g. -b 64')
     parser.add_argument('-e', '--epochs', type=int, default=100, help='Epoch to run')
@@ -76,9 +76,6 @@ def main():
     parser.add_argument('-d', '--deployment', default=False, type=bool, help='Are you going to deploy this model?')
 
     args = parser.parse_args()
-
-    if args.deployment:
-        sys.exit()
 
     data_dir = args.data_dir
     num_workers = args.workers
@@ -120,6 +117,12 @@ def main():
     weight_decay_step = args.weight_decay_step
     coarse_grading = args.coarse
     class_names = get_class_names(coarse_grading)
+
+    if args.deployment:  # "/opt/ml/model/
+        import shutil
+        shutil.copyfile(os.path.join(data_dir, "deployment", "last.pth"),
+                        os.path.join(os.environ['SM_MODEL_DIR'], "model.pth"), )
+        sys.exit()
 
     assert use_aptos2015 or use_aptos2019 or use_idrid or use_messidor
 

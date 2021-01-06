@@ -93,7 +93,8 @@ def main():
     criterion_reg_name = args.criterion_reg = ["mse"]
     criterion_cls_name = args.criterion_cls = ["focal_kappa"]
     criterion_ord_name = args.criterion_ord
-    folds = args.fold = [0, 1, 2, 3]
+    # folds = args.fold = [0, 1, 2, 3]
+    folds = args.fold
     mixup = args.mixup
     balance = args.balance
     balance_datasets = args.balance_datasets

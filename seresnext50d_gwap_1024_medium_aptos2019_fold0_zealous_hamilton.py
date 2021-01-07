@@ -52,3 +52,13 @@ hyperparameters = {
     # "experiment": null
     "deployment": True,
 }
+
+test_json = {   # only upto 10 images per inference
+    'region': 'us-east-1',
+    'img0': '19_right.jpeg',
+    'img1': '35_left.png',
+    'img2': '44_right.png',
+    'img3': '4_left.png',
+    'img4': '68_right.png',
+    'img5': '92_left.png',
+}

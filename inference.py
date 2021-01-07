@@ -25,9 +25,9 @@ from retinopathy.train_utils import report_checkpoint
 
 '''Not Changing variables'''
 data_dir = '/opt/ml/input/data'
-checkpoint_fname = 'model.pth'
 bucket = "diabetic-retinopathy-data-from-radiology"
-image_size = 1024
+model_dir = '/opt/ml/model'
+checkpoint_fname = 'model.pth'
 num_workers = multiprocessing.cpu_count()
 need_features = True
 tta = None
@@ -40,7 +40,7 @@ CLASS_NAMES = []
 def download_from_s3(region='us-east-1', bucket="diabetic-retinopathy-data-from-radiology", s3_filename='test.png',
                      local_path="/opt/ml/input/data"):
     if not path.exists(local_path):
-        makedirs(local_path)
+        makedirs(local_path, mode=0o755, exist_ok=True)
     s3_client = boto3.client('s3', region_name=region)
     try:
         s3_client.download_file(bucket, Key=s3_filename, Filename=local_path)
@@ -86,14 +86,12 @@ def run_image_preprocessing(
 
 
 def model_fn(model_dir):
-    # model_path = path.join("/opt/ml/input/data", "deployment", checkpoint_fname)  # '/opt/ml/model/model.pth'
     model_path = path.join(model_dir, checkpoint_fname)  # '/opt/ml/model/model.pth'
 
     # already available in this method torch.load(model_path, map_location=lambda storage, loc: storage)
     checkpoint = load_checkpoint(model_path)
     params = checkpoint['checkpoint_data']['cmd_args']
 
-    report_checkpoint(checkpoint)
     model_name = 'seresnext50d_gap'
 
     if model_name is None:
@@ -141,19 +139,16 @@ def input_fn(request_body, request_content_type='application/json'):
         input_object = json.loads(request_body)
         region = input_object['region']
 
-        for i in range(100):
+        logger.info('Downloading the input diabetic retinopathy data.')
+        for i in range(10):
             try:
-                image_name.append(input_object[f'img{str(i)}'])
+                img = input_object[f'img{str(i)}']
+                download_from_s3(region=region, bucket=bucket, s3_filename=img, local_path=data_dir)
+                image_name.append(img)
             except KeyError as e:
                 print(e)
-                break
-        logger.info('Downloading the input diabetic retinopathy data.')
 
         image_df = DataFrame(image_name, columns=['id_code'])
-        for id_code in image_df['id_code']:
-            logger.info(f'Image filename: {id_code}')
-            download_from_s3(region=region, bucket=bucket, s3_filename=id_code, local_path=data_dir)
-
         image_paths = image_df['id_code'].apply(lambda x: image_with_name_in_dir(data_dir, x))
 
         # Preprocessing the images
@@ -199,6 +194,9 @@ def predict_fn(input_object, model):
 
 
 def output_fn(prediction, content_type='application/json'):
+    """
+    # Convert result to JSON
+    """
     if content_type == 'application/json':
         return json.dumps(prediction), content_type
     else:

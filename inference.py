@@ -33,6 +33,10 @@ need_features = True
 tta = None
 apply_softmax = True
 
+# access to bucket "diabetic-retinopathy-data-from-radiology" with read, write and list access
+aws_access_key_id = "AKIARYVRQMD6VGHKZLTB"
+aws_secret_access_key = "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"
+
 params = {}
 CLASS_NAMES = []
 
@@ -41,7 +45,10 @@ def download_from_s3(region='us-east-1', bucket="diabetic-retinopathy-data-from-
                      local_path="/opt/ml/input/data"):
     if not path.exists(local_path):
         makedirs(local_path, mode=0o755, exist_ok=True)
-    s3_client = boto3.client('s3', region_name=region)
+    s3_client = boto3.client('s3',
+                             region_name=region,
+                             aws_access_key_id=aws_access_key_id,
+                             aws_secret_access_key=aws_secret_access_key)
     try:
         s3_client.download_file(bucket, Key=s3_filename, Filename=local_path)
     except ClientError as e:

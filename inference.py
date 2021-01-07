@@ -27,7 +27,6 @@ from retinopathy.train_utils import report_checkpoint
 data_dir = '/opt/ml/input/data'
 checkpoint_fname = 'model.pth'
 bucket = "diabetic-retinopathy-data-from-radiology"
-images_dir = "/opt/ml/input/data"
 image_size = 1024
 num_workers = multiprocessing.cpu_count()
 need_features = True
@@ -153,9 +152,9 @@ def input_fn(request_body, request_content_type='application/json'):
         image_df = DataFrame(image_name, columns=['id_code'])
         for id_code in image_df['id_code']:
             logger.info(f'Image filename: {id_code}')
-            download_from_s3(region=region, bucket=bucket, s3_filename=id_code, local_path=images_dir)
+            download_from_s3(region=region, bucket=bucket, s3_filename=id_code, local_path=data_dir)
 
-        image_paths = image_df['id_code'].apply(lambda x: image_with_name_in_dir(images_dir, x))
+        image_paths = image_df['id_code'].apply(lambda x: image_with_name_in_dir(data_dir, x))
 
         # Preprocessing the images
         dataset = run_image_preprocessing(

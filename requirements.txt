@@ -6,5 +6,3 @@ catalyst==19.7.4
 tqdm
 albumentations==0.3.2
 scikit-learn==0.21.3
-git+https://github.com/NVIDIA/apex
-git+https://github.com/mapillary/inplace_abn.git
